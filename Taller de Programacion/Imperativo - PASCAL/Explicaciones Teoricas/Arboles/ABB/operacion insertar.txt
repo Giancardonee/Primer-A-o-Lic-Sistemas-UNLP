@@ -1,0 +1,4 @@
+crear nodo
+cargar elemento
+poner los hijos en nil
+hacer el engnache

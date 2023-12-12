@@ -1,0 +1,7 @@
+nota:  A tener en cuenta
+	esto nos sirve, si nuestro arbol esta ordenado por codigo de alumno
+	y queremos saber el codigo de alumno minimo, nos desplazamos todo a la 	izquierda.
+	 Si queremos saber el codigo de alu,no maximo , nos dezplazamos todo a la derecha. 
+
+	Ahora, si nuestro arbol esta ordenado por otro criterio, no nos queda otra
+	que recorrer todo el arbol e ir guardando el minimo(ir preguntando si el elemento actual es menor al minimo)
