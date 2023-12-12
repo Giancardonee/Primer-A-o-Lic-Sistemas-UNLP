@@ -1,0 +1,51 @@
+package tema4.Eje3;
+/**
+ *
+ * @author Usuario
+ */
+public class Persona {
+    private String nombre; 
+    private int dni; 
+    private int edad; 
+
+    public Persona(String nombre, int dni, int edad) {
+        this.nombre = nombre;
+        this.dni = dni;
+        this.edad = edad;
+    }
+    
+    public Persona (){
+        
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public int getDni() {
+        return dni;
+    }
+
+    public void setDni(int dni) {
+        this.dni = dni;
+    }
+
+    public int getEdad() {
+        return edad;
+    }
+
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
+    
+    public String toString (){
+       String aux; 
+       aux = "Mi nombre es "+this.getNombre()+ ",mi dni es "+this.getDni()+ " y tengo "+this.getEdad()+ " años";
+       return aux;
+    }
+    
+}
