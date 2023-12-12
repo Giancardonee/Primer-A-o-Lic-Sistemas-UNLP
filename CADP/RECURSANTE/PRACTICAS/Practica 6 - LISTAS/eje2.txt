@@ -1,0 +1,80 @@
+Program Practica6ej2;
+
+Type 
+  lista = ^nodo;
+  persona = Record { 1'   Primero deberia estar declarado el tipo persona y despues lista = ^nodo; }
+    dni: integer;
+    nombre: string;
+    apellido: string;
+  End;
+  nodo = Record
+    dato: persona;
+    sig: lista;
+  End;
+
+Procedure leerPersona(p: persona);   { 2'   p deberia pasarse por referencia ( (var p: persona) )}
+Begin
+  read(p.dni);
+  If (p.dni <> 0)Then
+    Begin
+      read(p.nombre);
+      read(p.apellido);
+    End;
+End;
+
+
+{Carga la lista hasta que llega el dni 0}
+{ 8' la variable local p debe ser de tipo persona}
+{   p: persona ; }
+Procedure generarLista(Var l:lista); 
+Var 
+  p: nodo; 
+Begin
+  leerPersona(p);
+  While (p.dni <> 0) Do
+    Begin
+      agregarAdelante(l,p); { 3' se invoca un modulo, que hasta el momento no se declaro}
+        {   4' Aca deberia leerse devuelta la persona}
+    End;
+End;
+
+
+{   5' l debe ser pasado por referencia, porque al al agregar adelante vamos cambiando el comienzo de la lista
+    ( var l:lista; p:persona);
+}
+
+
+{Agrega un nodo a la lista}
+Procedure agregarAdelante(l:lista; p:persona);
+Var 
+  aux: lista;
+Begin
+    {   6' Falta hacer el new(aux) }
+  aux^.dato := p;
+  aux^.sig := l;
+  l := aux;
+End;
+
+
+{       7'  l debe ser pasado por valor. Si no perderiamos el comienzo de la lista}
+{       8' se esta accediento mal a los ultimos dos campos del puntero  }
+Procedure imprimirInformacion(Var l:lista);
+Begin
+  While (l <> Nil) Do
+    Begin
+      writeln('DNI: ',l^.dato.dni,' Nombre: ',l^.nombre,' Apellido: ',l^.apellido);
+
+      l := l^.sig;
+    End;
+End;
+
+{Programa principal}
+
+Var 
+  l: lista;
+Begin
+{  10' falta inicializar la lista}
+{ l := nil }
+  generarLista(l);
+  imprimirInformacion(l);
+End.
