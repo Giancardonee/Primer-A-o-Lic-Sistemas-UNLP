@@ -1,0 +1,19 @@
+procedure Inscripcion_MasGrande(numero_inscripcion2:integer;var Numero_Mas_Bajo2:integer;var Numero_Segundo_MasBajo2:integer;nombre2:string;var Nombre_Mas_Bajo2:string;var Nombre_SegundoMas_Bajo2:string);
+begin
+  if (numero_inscripcion2>Numero_Mas_Bajo2)then
+				begin
+					Numero_Segundo_MasBajo2:=Numero_Mas_Bajo2;   
+					Numero_Mas_Bajo2:=numero_inscripcion2;
+                    Nombre_SegundoMas_Bajo2:=Nombre_Mas_Bajo2;
+                    Nombre_Mas_Bajo2:=nombre2;
+
+				end
+			else
+				begin 
+					if(numero_inscripcion2>Numero_Segundo_MasBajo2) then
+						begin
+							Numero_Segundo_MasBajo2:=numero_inscripcion2;
+							Nombre_SegundoMas_Bajo2:=nombre2;
+						end
+				end;
+end;

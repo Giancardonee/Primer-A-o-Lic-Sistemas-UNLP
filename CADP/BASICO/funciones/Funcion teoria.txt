@@ -1,0 +1,3 @@
+En el nombte de la funcion va a retornar un valor. 
+Al invocar la funcion, le tenemos que asignar el nombre de la funcion
+a una variable, (Todo eso dentro del programa principal)

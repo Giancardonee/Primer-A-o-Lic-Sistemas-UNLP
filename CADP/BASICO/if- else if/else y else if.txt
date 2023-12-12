@@ -1,0 +1,4 @@
+if n < 0 
+	writeln ('el num es menor ')  
+else if 
+    wruteln (' el numero es mayor') ; 

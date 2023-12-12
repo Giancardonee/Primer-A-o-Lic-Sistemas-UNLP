@@ -1,0 +1,2 @@
+Nunca puedo hacer una funcion que devuelva algo de tipo vector. 
+LA FUNCION SOLO DEVUELVE VALORES TIPO SIMPLE

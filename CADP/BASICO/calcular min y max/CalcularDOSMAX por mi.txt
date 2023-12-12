@@ -1,0 +1,17 @@
+procedure NombresMaximos (Numero_inscripcion: integer; var max1,max2: integer; var Nombre,Nombre1,Nombre2: string ) ; 
+begin
+	if (Numero_inscripcion > max1) then 
+		begin
+			max2:= max1 ; 
+			max1:= Numero_inscripcion ; 
+			Nombre1:= Nombre; 
+		end
+			else 
+		begin
+			if (Numero_inscripcion > max2 ) then
+				begin
+						max2:= numero_inscripcion ; 
+						Nombre2:= Nombre; 
+				end
+			end;
+end; 

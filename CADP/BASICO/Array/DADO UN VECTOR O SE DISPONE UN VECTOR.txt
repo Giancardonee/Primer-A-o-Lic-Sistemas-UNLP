@@ -1,0 +1,14 @@
+Cuando dice dado un vector, o , se dispone un vector, 
+no debemos implementarlo, ese vector fue utilizado en otro programa,
+ al cual nosotros tenemos que solamente invocarlo,
+ y pasarle los parametros 
+
+
+para buscar elementos en un vector, tengo que usar WHILE
+
+Para buscar elementos en vectores ORDENADOS, y DESORDENADOS
+Se hacen de distinta forma 
+
+Cada vez que querramos contar un vector,tenemos
+que inicializar todos lo selementos de un nuevo vector en 0 
+
