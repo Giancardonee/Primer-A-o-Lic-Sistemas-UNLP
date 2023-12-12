@@ -1,0 +1,66 @@
+org 1000h
+msj1 DB "  Ingrese un numero:   "
+fin1 DB ?
+
+org 1500h
+num1 DB ? 
+num2 DB ? 
+msj2 DB "  El resultado de la suma es :  " 
+fin2 DB ? 
+totalA DB "0"
+totalB DB ? 
+
+org 3000h
+unDigito: mov totalB, cl
+          mov bx, offset msj2 
+          mov al, offset fin2- offset msj2 
+          int 7 ;
+          
+          MOV BX, OFFSET totalB  ;IMPRIMO DESDE TOTALA (1...9) ONLY
+          MOV AL, 1 ;CANT DE CARACTERES A IMPRIMIR ; CASO A 1 DIGITO
+          INT 7
+RET
+          
+
+ret 
+
+convertir: mov cl, num1
+           sub cl, 30h ; para que me quede un digito
+           mov dl, num2 
+           ; CL n1-30h  //// DL n2 
+           add cl, dl
+           cmp cl, 3AH ; 
+js unDigito  ; si da signo , es de un digito 
+           sub CL, 10 ; si es mayor que 9 le resto 10, me queda un digtitp 
+           inc totalA 
+           
+           
+           mov totalB, cl ; muevo el segundo digito 
+           
+           mov bx, offset msj2 
+           mov al, offset fin2- offset msj2 
+           int 7 ; 
+	  mov bx, offset totalA
+           mov al, 2
+           int 7 
+           
+          
+ret 
+
+pedirnum: mov bx, offset num1 ; guardo el primer num leido 
+          int 6 ; ingreso n1 
+          mov bx, offset num2 ; guardo el segundo num leido
+          int 6 ; ingreso n2 
+
+         call convertir 
+
+org 2000h
+mov bx, offset msj1 
+mov al, offset fin1-offset msj1
+int 7
+
+call pedirnum
+
+int 0
+end
+

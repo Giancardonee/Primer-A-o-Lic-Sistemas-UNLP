@@ -1,0 +1,37 @@
+PA EQU 30H
+CA EQU 32H 
+
+; 1 ENTRADA 
+; 0 SALIDA 
+
+ORG 1000h
+prendida db "LA LLAVE DE LA IZQ ESTA PRENDIDA"
+fin_prendida db ?
+apagada db "LA LLAVE ESTA APAGADA"
+fin_apagada db ? 
+patron DB 10000000b
+
+ORG 2000H 
+MOV AL, 11111111B ; HABILITO PARA USAR TODAS LAS LLAVES
+OUT CA, AL 
+
+; CONF QUE LLAVE SUBIR
+MOV AL, 10000000B ; SUBI LA LLAVE DE MAS A LA IZQUIERDA 
+OUT PA, AL 
+
+CMP AL, patron
+JNZ Llave_apagada
+
+; si esta prendida salta aca abajo : 
+
+   mov bx, offset prendida
+   mov al, offset fin_prendida - offset prendida
+   int 7
+   jmp fin 
+
+
+Llave_apagada: mov bx, offset apagada
+               mov al ,offset fin_apagada - offset apagada
+               int 7
+fin:hlt
+END

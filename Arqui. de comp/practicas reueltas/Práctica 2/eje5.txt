@@ -1,0 +1,38 @@
+ORG 1000H
+MSJ DB "INGRESE UN NUMERO:" 
+FIN DB ? 
+noes DB "CARACTER NO VALIDO"
+h DB ?
+ ORG 1500H 
+NUM DB ? 
+ 
+org 3000h
+hola: mov bx, offset num
+         int 6 
+         mov cl, [bx]
+         cmp cl, 030h 
+js no
+         cmp cl, 039h
+js no
+         jmp esnum
+         
+esnum:   mov CL, 0FFh 
+         jmp fin
+         
+no: mov cl, 00h
+mov bx, offset noes
+mov al, offset h-offset noes
+int 7
+
+
+fin:ret
+
+ ORG 2000H 
+ MOV BX, OFFSET MSJ 
+MOV AL, OFFSET FIN-OFFSET MSJ
+INT 7 
+call hola
+int 0
+ END 
+ 
+ 

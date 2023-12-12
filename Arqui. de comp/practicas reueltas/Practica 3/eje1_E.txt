@@ -1,0 +1,94 @@
+; ||CONSTANTES ||
+EOI EQU 20H
+IMR EQU 21H 
+PB EQU 31H 
+CB EQU 33H
+INT1 EQU 25H
+TEMP EQU 10
+CONT EQU 10H 
+COMP EQU 11H
+
+ORG 40
+IP_TEMP DW RUT_TEMP
+
+ORG 3000H
+RUT_TEMP:  CMP FLAG, 1
+           JZ LUCES_DEC  
+           CMP FLAG, 0
+           JZ LUCES_INC
+; decremento
+LUCES_DEC: DEC BX
+           MOV DL, BYTE PTR [BX]
+           MOV AL,DL
+           OUT PB, AL
+           CMP BYTE PTR [BX], 0
+           JZ FLAG0
+           JMP RESET
+          
+
+
+; incremento 
+LUCES_INC: INC BX
+           INC DL
+           MOV DL, BYTE PTR [BX]
+           MOV AL, DL
+           OUT PB, AL
+           CMP BYTE PTR [BX], 128
+           JZ FLAG1
+           JMP  RESET
+          
+                     
+
+RESET: MOV AL, 0      ;REINICIA EL CLOCK 
+       OUT CONT, AL 
+       MOV AL, 20H
+       OUT EOI, Al
+       JMP fin
+
+FLAG1: MOV FLAG, 1 
+       JMP RESET
+       
+FLAG0: MOV FLAG, 0
+       JMP RESET 
+      
+
+       
+       
+fin: IRET
+
+ORG 1000H
+TABLA DB 0,1, 2, 4, 8 , 16, 32, 64 , 128
+FLAG DB 0
+FIN DB ? 
+ORG 2000H
+STI
+; CONF INT
+MOV AL, 11111101B 
+OUT IMR, AL
+
+; CONF ID DE INT
+MOV AL, TEMP
+OUT INT1, AL
+
+; INICIALIZAR EN C 
+MOV AL, 0
+OUT CB, AL 
+OUT PB, AL
+OUT CONT, AL
+
+; INICIALIZO COMPARADOR EN 1
+MOV AL, 1
+OUT COMP, AL
+MOV BX, OFFSET TABLA
+MOV CL, 0 
+STI
+
+LAZO: JMP LAZO
+HLT
+END
+
+
+
+
+
+

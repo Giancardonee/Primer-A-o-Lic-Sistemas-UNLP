@@ -1,0 +1,55 @@
+ ;Escriba la subrutina DIV que calcule el resultado de la división
+ ;entre 2 números positivos. Dichos números deben 
+;pasarse por valor desde el programa principal a la subrutina
+;a través de la pila. El resultado debe devolverse también 
+ ; a través de la pila por valor. 
+
+
+org 1000h
+n1 DW 15
+n2 DW 5
+resul DW ? 
+
+org 3000h
+div: push ax
+     push bx
+     push cx
+     push dx
+     mov bx, sp 
+     add bx, 14 ; vamos a n1 
+     mov ax, [BX] ; en AX está n1 
+     cmp ax, 0
+js fin 
+     sub bx, 2
+     mov cx, [bx] ; mueve a cx n2
+     cmp cx, 0
+js fin
+    sub bx, 2 
+    mov DX, [bx] ; movemos el contador a CX 
+    mov dx,0
+lazo: sub ax, cx
+      inc dx
+      cmp ax, 0
+js fin
+      jz fin 
+      jmp lazo
+   
+    
+     
+     
+fin: mov resul, dx
+     pop dx
+     pop cx
+     pop bx
+     pop ax
+ret
+org 2000h
+mov ax, n1
+push ax
+mov ax, n2
+push ax
+mov ax, resul
+push ax
+call div 
+hlt
+end

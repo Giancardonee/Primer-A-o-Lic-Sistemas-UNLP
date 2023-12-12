@@ -1,0 +1,17 @@
+EJERCICIO 1) PRAC4
+
+a) dadd r1, r2, r0
+ # hace add de r2 con 0, entonces le queda el mismo registro, y el resultado lo asigna a r1
+ # respuesta_A) en msx seria como: mov {registro_dest}, {registro1} ///  mov AL, DL
+
+b) daddi r3, r0, 5 ; inicializa r3 en 5 
+#respuesta_B) en msx seria algo como: mov [registro_dest] , 5 ///  mov bx, 5
+
+c) dsub r4, r4, r4 ; inicializo registro [r4] en 0
+#respuesta_C) en msx seria algo como: mov [registro], 0 ///  mov bx, 0
+
+d) daddi r5, r5, -1; estaria decrementando un registro
+#respuesta_D) en msx seria algo como: dec [registro] /// dec cl
+
+e) xori r6, r6, 0xffffffffffffffff ; le hace un xor con ffh a un registro
+#respuesta_E) en msx seria algo como:  xor cx, 0ffH (1111 1111b)

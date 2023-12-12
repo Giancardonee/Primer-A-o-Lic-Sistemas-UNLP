@@ -1,0 +1,20 @@
+PA EQU 30H
+PB EQU 31H
+CA EQU 32H
+CB EQU 33H
+
+; CUANDO PRENDO UNA LLAVE QUE SE PRENDA UNA LUZ 
+
+ORG 2000H
+ MOV AL, 0FFH ; PA entradas (Llaves)
+ OUT CA, AL
+ 
+ 
+MOV AL, 0 ; PB salidas (Luces)
+OUT CB, AL
+
+POLL: IN AL, PA  ; trae el valor de PA a AL
+      OUT PB, AL ; agarra el valor de las llaves y copia en las luces
+      JMP POLL 
+HLT
+END

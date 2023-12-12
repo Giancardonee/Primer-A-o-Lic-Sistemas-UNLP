@@ -1,0 +1,13 @@
+ORG 1000H
+cad DB 01h
+
+org 2000h
+mov bx, offset cad
+mov al, 1     ; longitud de cadena 
+lazo: int 7   ; imprimo de a 1 
+      inc byte ptr [bx] ; el byte ptr es importantisimo
+      cmp byte ptr [bx], 0FFh ; el byre ptr es importantisimo 
+      jz fin   ; si es 0 que termine 
+      jmp lazo ; si no que siga haciendo el lazo 
+fin: int 0
+end

@@ -1,0 +1,25 @@
+
+org 1000h
+n1 DW 1234h
+n2 DW 5678h
+org 3000h
+subrutina: mov bx, sp 
+           add bx, 2
+           mov BX, [bx] 
+           mov AX, [bx] 
+           mov bx, sp
+           add bx, 4
+           mov BX, [bx] 
+           mov CX , [bx]
+           push ax
+           push cx
+           ret 
+
+org 2000h 
+mov AX, offset n1
+push ax
+mov CX, offset n2 
+push CX
+call subrutina 
+hlt
+end

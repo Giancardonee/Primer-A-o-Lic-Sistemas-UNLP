@@ -1,0 +1,23 @@
+org 1000h
+num1 db 15
+num2 db 5
+
+org 3000h
+div: mov dx, 0  
+ lazo: inc dx
+      cmp ah, 0
+      jz Fin
+      sub al, ah
+      JZ Fin 
+     
+      jmp lazo
+    
+    
+Fin: ret
+org 2000h
+ mov al, num1
+ mov ah, num2
+call div
+
+hlt
+end

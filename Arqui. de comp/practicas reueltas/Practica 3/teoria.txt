@@ -1,0 +1,11 @@
+los programas generalmente acceden al hardware mediante el sistema operativo 
+y el sistema operativo (s.o) tiene un monton de drivers para controlar cada dispositivo
+
+
+DISPOSITIVOS INTERNOS : PIC , TIMER , PIO, HANDSHAKE Y CDMA
+
+EL PIO: NOS SIRVE PARA INTERACTUR CON : LAS LUCES , LAS LLAVES , Y LAS IMPRESORAS, SON CONFIGURABLES
+
+EL HANDSHAKE NO ES TAN CONFIGURABLE PERO SIRVE PARA LA IMPRESORA 
+
+EL CDMA: COPIA DATOS DE UN LUGAR A OTRO, SIN QUE EL PROCESADOR SE TENGA QUE METER EN EL MEDIO 

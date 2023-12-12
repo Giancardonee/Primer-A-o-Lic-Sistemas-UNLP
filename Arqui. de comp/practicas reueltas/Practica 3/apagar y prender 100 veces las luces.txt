@@ -1,0 +1,24 @@
+; hacer un programa que apague y prenda las luces 100 veces 
+; defino constantes :
+
+PB EQU 31H
+CB EQU 33H
+
+ORG 2000H
+; CONF CB 
+
+MOV AL, 00000000B ; HABILITO TODAS LAS LUCES 
+OUT CB, AL 
+
+MOV CL, 100 ; CL VA A SER EL CONTADOR DE veces
+
+LAZO: MOV AL, 11111111B ; PRENDO TODAS LAS LUCES
+      OUT PB, AL 
+
+      MOV AL, 0 ; APAGO LAS LUCES 
+      OUT PB, AL 
+
+      DEC CL
+      JNZ LAZO
+
+END 

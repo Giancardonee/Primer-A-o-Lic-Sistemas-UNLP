@@ -1,0 +1,52 @@
+PA EQU 30h 
+PB EQU 31h 
+CA EQU 32h 
+CB EQU 33h 
+ 
+;Escribir un programa para imprimir el mensaje “ORGANIZACION Y ARQUITECTURA7
+; DE COMPUTADORAS” utilizando la impresora a través de la PIO.
+
+org 1000h 
+MSJ DB "ORGANIZACION Y ARQUITECTURA "
+    DB " DE COMPUTADORAS"
+FIN DB ? 
+
+ORG 2000H 
+; CONF CA 
+MOV AL, 11111101B
+OUT CA, AL 
+
+MOV AL, 0
+OUT CB, AL 
+
+MOV BX, OFFSET MSJ 
+MOV CL, OFFSET FIN - OFFSET MSJ
+
+; PREGUNTO ESTADO DE BUSY
+
+POLL: IN AL, PA 
+      AND AL, 1
+      JNZ POLL
+      ; SI BUSY = 0 
+      
+      MOV AL, [BX]
+      OUT PB, AL 
+      
+      ; STROBE EN 1 
+      IN AL, PA 
+      OR AL, 00000010B
+      OUT PA, AL 
+      
+      ; STROBE EN 0
+      IN AL, PA
+      AND AL, 11111101B 
+      OUT PA, AL 
+      
+      INC BX
+      DEC CL
+      JNZ POLL 
+      
+      INT 0 
+      END
+      
+      

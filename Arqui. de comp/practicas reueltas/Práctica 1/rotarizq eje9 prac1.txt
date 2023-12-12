@@ -1,0 +1,16 @@
+org 1000h
+cadena DB 27h
+
+org 3000h
+
+rotarizq: add AL, AL 
+          adc AL, 0 
+          
+         ret
+org 2000h
+mov AL, cadena
+call rotarizq
+call rotarizq
+
+hlt
+end

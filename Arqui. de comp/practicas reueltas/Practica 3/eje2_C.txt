@@ -1,0 +1,54 @@
+PA EQU 30H
+PB EQU 31H
+CA EQU 32H 
+CB EQU 33H
+
+ORG 1000H
+NUM_CAR DB 5
+CAR DB ? 
+
+ORG 3000H
+INICIALIZAR_IMPR: MOV AL, 11111101B ; CONF CA 
+                  OUT CA, AL 
+                  
+                  MOV AL, 0  ; CB TODO SALIDA
+                  OUT CB, AL 
+                  
+                  IN AL, PA 
+                  AND AL,11111101B ; FUERZO A 0 
+                  OUT PA, AL 
+RET 
+
+ORG 3500H
+PULSE: IN AL, PA 
+       OR AL, 00000010B ; FUERZO A 1  
+       OUT PA, AL 
+       
+       IN AL, PA 
+       AND AL, 11111101B ; FUERZO A 0 
+       OUT PA, AL  
+       RET
+
+ORG 2000H 
+PUSH AX
+CALL INICIALIZAR_IMPR
+POP AX
+MOV BX, OFFSET CAR ; CAR A IMPRIMIR 
+MOV DL, NUM_CAR
+LAZO: INT 6 ; INGRESO CAR 
+; CHEQUEO ESTADO IMPRESORA
+POLL: IN AL, PA 
+      AND AL, 1 
+      JNZ POLL
+    MOV AL, [BX] ; MUEVO CAR A AL PARA DESP IMPRIMIRLO
+    OUT PB, AL ; MANDO A IMPRIMIR EL CAR
+    PUSH AX
+    CALL PULSE
+    POP AX
+    DEC DL ; RESTO CARACTER QUE FALTA
+    JNZ LAZO ; SI NO LLEGUE AL FINAL, VUELVO A INGRESAR UN CAR
+    INT 0 
+    END
+    
+    
+   
