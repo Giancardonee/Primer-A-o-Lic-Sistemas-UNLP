@@ -1,0 +1,186 @@
+programa parcial1
+procesos 
+  proceso juntarPapeles (E id:numero; ES cantP:numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      cantP:= cantP+1
+      EnviarMensaje(id,jefe)
+  fin
+  proceso juntarFlores (E id:numero; ES cantF:numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF+1
+      EnviarMensaje(id,jefe)
+  fin
+  proceso hacerIntento (E id:numero; ES cantP:numero; ES cantF:numero)
+  variables
+    avRandom:numero
+    caRandom:numero
+    avIni:numero
+    caIni:numero
+  comenzar
+    avIni:= PosAv
+    caIni:= PosCa
+    Random(avRandom,45,62)
+    Random(caRandom,48,69)
+    BloquearEsquina(avRandom,caRandom)
+    Pos(avRandom,caRandom)
+    juntarPapeles(id,cantP)
+    juntarFlores(id,cantF)
+    Pos(avIni,caIni)
+    LiberarEsquina(avRandom,caRandom)
+  fin
+  proceso hacerIntentos (E id:numero; ES cantP:numero; ES cantF:numero)
+  comenzar
+    repetir 5
+      hacerIntento (id,cantP,cantF)
+    EnviarMensaje(0,jefe) {para que cuente cuando termino}
+  fin
+  {-- modulos para el jefe --} 
+  proceso actualizarCantidad (E id:numero; ES cant1:numero; ES cant2:numero; ES cant3: numero; ES cant4:numero)
+  comenzar
+    si (id =1)
+      cant1:= cant1+1
+    sino
+      si (id =2)
+        cant2:= cant2 +1
+      sino
+        si (id =3)
+          cant3:= cant3+1
+        sino
+          si (id =4)
+            cant4:= cant4+1
+  fin
+  proceso inicialiarCantidades(ES c1:numero; ES c2:numero; ES c3:numero; ES c4:numero;ES terminaron:numero)
+  comenzar
+    c1:=0
+    c2:=0
+    c3:=0
+    c4:=0
+    terminaron:=0
+  fin
+  proceso calcularMax (E quienEs:numero; E suCantidad:numero; ES max:numero; ES robotMax:numero)
+  comenzar
+    si (suCantidad > max)
+      max:= suCantidad
+      robotMax:= quienEs
+  fin
+  proceso recibirCantidades (ES cant1:numero; ES cant2:numero; ES cant3:numero; ES cant4:numero)
+  variables
+    terminaron:numero
+    id:numero
+  comenzar
+    inicialiarCantidades(cant1,cant2,cant3,cant4,terminaron)
+    mientras (terminaron < 4)
+      RecibirMensaje(id,*)
+      si (id = 0)
+        terminaron:= terminaron +1
+      sino
+        actualizarCantidad(id,cant1,cant2,cant3,cant4)
+  fin 
+  proceso asignarIds
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+  fin
+  proceso quienEsMaximo (E cant1:numero; E cant2:numero; E cant3:numero; E cant4:numero; ES robotMax:numero)
+  variables
+    max:numero
+  comenzar
+    max:=0
+    robotMax:=0
+    calcularMax(1,cant1,max,robotMax)
+    calcularMax(2,cant2,max,robotMax)
+    calcularMax(3,cant3,max,robotMax)
+    calcularMax(4,cant4,max,robotMax)
+  fin
+  proceso depositarFlores (ES cantF:numero)
+  comenzar
+    repetir (cantF)
+      depositarFlor
+    cantF:=0
+  fin
+  proceso depositarPapeles (ES cantP:numero)
+  comenzar
+    repetir (cantP)
+      depositarPapel
+    cantP:=0
+  fin
+  proceso depositarElementos (ES cantF:numero; ES cantP:numero)
+  comenzar
+    depositarFlores(cantF)
+    depositarPapeles(cantP)
+  fin
+  proceso enviarMensajeParaMaximo (E robotMax:numero)
+  comenzar
+    EnviarMensaje(robotMax,r1)
+    EnviarMensaje(robotMax,r2)
+    EnviarMensaje(robotMax,r3)
+    EnviarMensaje(robotMax,r4)
+  fin
+areas
+  areaRecolectores:AreaPC(45,48,62,69)
+  esquinaR1: AreaP(10,10,10,10)
+  esquinaR2: AreaP(11,10,11,10)
+  esquinaR3: AreaP(12,10,12,10)
+  esquinaR4: AreaP(13,10,13,10)
+  esquinaJefe: AreaP(1,1,1,1)
+robots
+  robot rRecolector
+  variables
+    id:numero
+    cantP:numero
+    cantF:numero
+    quienEsMax:numero
+  comenzar
+    cantP:=0
+    cantF:=0
+    RecibirMensaje(id,jefe)
+    hacerIntentos(id,cantP,cantF)
+    RecibirMensaje(quienEsMax,jefe)
+    si (quienEsMax = id)
+      depositarElementos(cantF,cantP)
+  fin   
+  robot rJefe
+  variables
+    cant1:numero
+    cant2:numero
+    cant3:numero
+    cant4:numero
+    robotMax:numero
+  comenzar
+    asignarIds
+    recibirCantidades(cant1,cant2,cant3,cant4)
+    quienEsMaximo(cant1,cant2,cant3,cant4,robotMax)
+    enviarMensajeParaMaximo(robotMax)
+    Informar('El_Maximo_Es',robotMax)
+  fin
+variables
+  r1: rRecolector
+  r2: rRecolector
+  r3: rRecolector
+  r4: rRecolector
+  jefe: rJefe
+comenzar
+  {area en comun entre los recolectores}
+  AsignarArea(r1,areaRecolectores)
+  AsignarArea(r2,areaRecolectores)
+  AsignarArea(r3,areaRecolectores)
+  AsignarArea(r4,areaRecolectores)
+  {ateas privada de cada robot}
+  AsignarArea(r1,esquinaR1)
+  AsignarArea(r2,esquinaR2)
+  AsignarArea(r3,esquinaR3)
+  AsignarArea(r4,esquinaR4)
+  AsignarArea(jefe,esquinaJefe)
+  {iniciamos los robots}
+  Iniciar(r1,10,10)
+  Iniciar(r2,11,10)
+  Iniciar(r3,12,10)
+  Iniciar(r4,13,10)
+  Iniciar(jefe,1,1)
+fin  
