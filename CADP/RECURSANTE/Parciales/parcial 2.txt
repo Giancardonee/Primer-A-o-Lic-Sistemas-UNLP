@@ -1,0 +1,128 @@
+{Enunciado:
+Una cátedra dispone de información de sus alumnos en la cursada 2022. De cada alumno se conoce: Nro de legajo,
+apellido y nombre, año de inscripción a la carrera y nota obtenida en cada una de las 10 autoevaluaciones
+rendidas durante la cursada.
+Se pide:
+a)	Informar apellido y nombre de los alumnos cuyo año de inscripción sea impar.
+b)	Informar para cada autoevaluación cuantos alumnos obtuvieron nota mayor a 4
+c)	Generar una estructura que contenga los alumnos con promedio mayor a 7 (en las autoevaluaciones)
+}
+Program Alumnos;
+Const
+      NumMax = 10;
+Type
+      TrangoNotas = 0..NumMax;
+      TrangoAE= 1..NumMax;
+      Cadena20 = string[20];
+
+      VecAuto_Notas = array[TrangoAE] of TrangoNotas;
+
+     ALUMNO = RECORD
+          Nro: integer;
+          Ape: cadena20;
+          Nom: cadena20;
+          Anio: integer;
+          Nota: VecAuto_Notas;
+     End;
+
+Lista =^nodo;
+Nodo = record
+    Dato: Alumno;
+    Sig: lista;
+End;
+
+Contador = array[TrangoAE] of integer;
+
+{
+Procedure LeerAlumno (Var a: alumno);
+Procedure AgregarAdelante(Var L: lista; a: alumno);   Se disponen
+Procedure cargarLista (Var L: lista);
+}
+
+Procedure InsertarAdelante(var L : lista; a : alumno);
+var
+     nue : lista;
+begin
+     new(nue);
+     nue^.dato := a;
+     nue^.sig := L;
+     L := nue;
+end;
+
+procedure procesarNotas (Notas : VecAuto_Notas; var VC : Contador; var Prom : real);
+var
+    total : integer;
+    i : integer;
+begin
+     total := 0;
+
+     for i := 1 to NumMax do begin
+        if (Notas[i] > 4) then   //Inc B
+           VC[i] := VC[i] + 1;
+
+        total := total + Notas[i];
+     end;
+     Prom := total / NumMax;
+end;
+
+procedure procesarLista (L : Lista; var VC : Contador; var Nueva : Lista);
+var
+    promAct : real;
+begin
+     while (L <> Nil) do begin
+        //Procesar el nodo actual (L^.dato)
+        //Inciso A
+        if ((L^.dato.Nro MOD 2) = 1) then
+             writeln(L^.dato.Ape, L^.dato.Nom);
+
+        //Inciso B y C
+        procesarNotas(L^.dato.nota, VC, promAct);
+
+        if (promAct > 7) then
+             InsertarAdelante(Nueva, L^.dato);
+
+        L := L^.sig;
+     end;
+end;
+
+procedure inicializarContador (var V : Contador);
+var
+    i : integer;
+begin
+     for i := 1 to NumMax do
+             V[i] := 0;
+end;
+
+procedure informarContador (V : Contador);
+var
+    i : integer;
+begin
+    for i := 1 to NumMax do
+            write('La autoevaluacion ', i, ' tuvo ', V[i], ' alumnos con nota mayor a 4');
+end;
+
+Var
+     L: lista;
+     //VAN: VecAuto_Notas;
+     //AluM7: Lista;
+     //Promedio: real;
+
+     VC : Contador;
+     LN : Lista;
+Begin
+     L:= nil;
+     LN := nil;
+     inicializarContador(VC); 
+
+     //inicializarVecAuto_Notas(VAN);
+    cargarLista(L);                                   //Se dispone
+
+    ProcesarLista(L, VC, LN);
+
+    InformarContador(VC);
+
+
+    //Procesar (L, AluM7, Promedio);
+    //Informar(L);
+    //InformarAuto-Nota(L);
+End.

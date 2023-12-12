@@ -1,0 +1,201 @@
+Una panadería artesanal del centro de La Plata vende productos de elaboración propia. 
+La panadería agrupa a sus productos en 20 O categorías (por ej: 1, Pan; 2. Medialunas dulces; 3. Medialunas saladas; etc). 
+De cada categoria se conoce: nombre y precio por kilo del producto. La panaderia dispone de la información de las categorias
+
+a)Realizar un módulo que retome, en una estructura de datos adecuada, la información de todas las compras efectuadas en el último año. 
+Dicha información se lee desde teciado, ordenada por DNI del cliente. De cada compra se lee: DNI del cliente, categoria del producto (entre 1 y 20) y 
+cantidad de is comprados. La lectura finaliza cuando se ingresa el DNI -1 (que no debe procesarse) b) Realizar un módulo que reciba la información de las categorías 
+y la de todas las compras, y retome
+    
+DNI del cliente que menos dinero ha gastado 
+Cantidad de compras por categoría.3.cantidad total de compras de clientes con DNI comesto por, a lo sumo, 5 digitos impares. NOTA: Implementar el programa principal.
+
+program parcial1; 
+const
+	cantCategorias = 20; 
+type
+	str20 = string[20];
+	rangoCategorias = 1..20;
+	
+	dispone = record
+			precio : real;
+			nombre : str20;
+	end;
+
+	vCategorias = array [1..cantCategorias] of dispone;
+	
+	vContador = array [1..cantCategorias] of integer;
+	
+	compra = record
+			dni : integer;
+			categoria : rangoCategorias; 
+			cantKilos : real;
+	end;
+	
+	listaCompras = ^nodo;
+	nodo = record
+			elemento : compra;
+			siguiente : listaCompras;
+	end;
+	
+	procedure crearLista (var l : listaCompras); 
+	begin
+			l:= nil; 
+	end;
+	
+	procedure leerCategorias(var d : dispone); // se dispone
+	begin
+	end;
+	
+	procedure cargarVcategorias(var v: vCategorias); // se dispone
+	begin
+	end;
+	
+	procedure LeerCompra (var c : compra); 
+	begin
+		write ('Ingrese el dni: '); readln (c.dni); 
+		if (c.dni <> -1) then 
+			begin
+				write ('ingrese la categoria: '); readln (c.categoria); 
+				write ('ingrese la cantidad de kilos: '); readln (c.cantKilos); 
+			end;
+	end;
+
+	procedure insertarOrdenado (var pI : listaCompras; dato : compra); 
+	var
+		actual,anterior,nuevo : listaCompras;
+	begin
+		new(nuevo); 
+		nuevo^.elemento:= dato;
+		nuevo^.siguiente:= nil;
+	
+		actual:= pI; 
+		anterior:= pI;
+		while ( (actual <> nil) and (dato.dni > actual^.elemento.dni) ) do 
+			begin
+				anterior:= actual;
+				actual:= actual^.siguiente;
+			end;
+		if ( actual <> nil ) then 
+			begin
+					if ( actual = anterior ) then 
+						pI:= nuevo
+					else
+						anterior^.siguiente:= nuevo; 
+					
+					nuevo^.siguiente:= actual; 
+			end;
+	end;
+	
+	procedure cargarLista (var pI : listacompras); 
+	var
+			c : compra;
+	begin
+		LeerCompra( c ); 
+		while (c.dni <> -1) do 
+			begin
+				insertarOrdenado(pI,c); 
+					LeerCompra( c ); 
+			end;
+	end;
+	
+	procedure inicializarVcont (var v : vContador); 
+	var
+		i : integer;
+	begin
+		for i:= 1 to cantCategorias do 
+			v[i]:= 0;
+	end;
+			
+	procedure calcularMin (dni: integer; gasta : real; var min : real; var codClienteMin : integer); 
+	begin
+				if ( gasta < min ) then 
+					begin
+						min:= gasta; 
+						codClienteMin:= dni;
+					end;
+	end;
+	
+	
+	//////------------------------------------------------------------------------------------------------------------------------------
+		procedure cantComprasCategoria ( v : vContador); 
+		var
+			i : integer;
+		begin
+			for i:= 1 to cantCategorias do 
+				writeln ('De la categoria ',i, ' se hicieron: ',v[i], ' compras' ); 
+		end;
+		
+		function CumpleDigImpares (dni : integer): boolean;
+		var
+			dig : integer;
+			cantImpares : integer;
+		begin
+			cantImpares:= 0; 
+				while ( dni <> 0 ) do 
+					begin
+						dig:= dni mod 10; 
+						if ( (dig mod 2) =1 ) then 
+							cantImpares:= cantImpares + 1;
+					
+					dni:= dni div 10; 
+					end;
+			CumpleDigImpares:= ( cantImpares <= 5); 
+	end; 
+	
+	procedure procesar ( vCat : vCategorias; l : listaCompras; var dniClienteMin : integer; var cantDniCumple : integer; var vCont : vContador ) ; 
+	var
+		clienteActual : integer;
+		min,Gasta : real; 
+	begin
+		dniClienteMin:= 0;
+		min:= 32000;
+		cantDniCumple:= 0;
+		inicializarVcont(vCont); 
+		while ( l <> nil ) do 
+			begin
+				clienteActual:= l^.elemento.dni;
+				Gasta:= 0;
+					while ( ( l <> nil ) and (l^.elemento.dni = clienteActual) ) do 
+						begin
+					
+						{ cuento cantidad de compras por categoria }
+						vCont[l^.elemento.categoria]:= vCont[l^.elemento.categoria] + 1; 
+
+						{ cuanto gasta el cliente ( para sacar el minimo )}
+						Gasta:= Gasta + (l^.elemento.cantKilos  * vCat[L^.elemento.categoria].precio);
+						
+	{ cantidad total de compras de clientes con DNI comesto por, a lo sumo, 5 digitos impares. NOTA: Implementar el programa principal. }
+						if (CumpleDigImpares(l^.elemento.dni)) then 
+							cantDniCumple:= cantDniCumple + 1;
+							
+									l:= l^.siguiente;
+						end;{ cuando termino de procesar el cliente: }
+						calcularMin(clienteActual,gasta,min,dniClienteMin); 
+						
+			end;			
+	end;
+	
+	
+{ prog principal }
+var 
+	l : listaCompras; 
+	vCat: vCategorias; // se dispone
+	dniClienteMin,cantDniCumple : integer;
+	vCont : vContador; 
+begin
+	crearLista(l); 
+	cargarVcategorias(vCat); 
+	cargarLista(l);
+	procesar(vCat, l, dniClienteMin, cantDniCumple, vCont ) ;
+	
+	
+	{		 inciso b)1. 	}
+	writeln ('El cliente que menos dinero gasto: ',dniClienteMin); 
+	
+	{ 	     inciso b).2		}
+	cantComprasCategoria(vCont);
+	
+	{		inciso b)3.  	}
+	writeln ('Cantidad de compras de clientes c dni de a lo sumo 5 dig impares: ',cantDniCumple);  
+end.	
