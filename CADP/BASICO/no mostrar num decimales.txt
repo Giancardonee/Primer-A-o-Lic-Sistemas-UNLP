@@ -1,0 +1,9 @@
+	en funciones no puedo pasar parametros por var (referencia) 
+
+
+	mostrar numeros con limite de digitos decimales. 	
+  writeln(num:20:3);  (* Con tres decimales *)
+  writeln(num:7:2);   (* Con dos decimales *)
+  writeln(num:4:1);   (* Con un decimal *)
+  writeln(num:3:0);   (* Sin decimales *)
+ 
