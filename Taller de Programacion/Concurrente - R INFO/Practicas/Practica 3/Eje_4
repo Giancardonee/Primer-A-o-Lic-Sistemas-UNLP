@@ -1,0 +1,112 @@
+programa eje4
+procesos
+  proceso asignarIds 
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+  fin
+  proceso moverFlor (E avIni:numero; E caIni:numero)
+  comenzar
+    tomarFlor
+    BloquearEsquina(11,11) { esquina donde debo depositar la flor}
+    Pos(11,11)
+    LiberarEsquina(10,10)
+    depositarFlor
+    Pos(avIni,caIni)
+    LiberarEsquina(11,11)
+  fin
+  proceso procesarEsquina
+  variables
+    hayFlor: boolean
+    avIni:numero
+    caIni:numero
+  comenzar
+    avIni:= PosAv
+    caIni:= PosCa
+    hayFlor:=V
+    mientras (hayFlor)
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      si (HayFlorEnLaEsquina)
+        moverFlor(avIni,caIni)
+      sino
+        hayFlor:=F
+        Pos(avIni,caIni)
+        LiberarEsquina(10,10)
+  fin
+  proceso quienTerminoUltimo (ES robotUltimo:numero)
+  variables
+    id:numero
+  comenzar
+    repetir 4 {cant de robots}
+      RecibirMensaje(id,*)
+    robotUltimo:=id
+  fin
+  proceso juntarFlores
+  comenzar
+    Pos(11,11)
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+    Pos(1,1) {vuelve a la esquina inicial}
+  fin
+areas
+  areaR1: AreaP(9,9,9,9)
+  areaR2: AreaP(9,10,9,10)
+  areaR3: AreaP(9,11,9,11)
+  areaR4: AreaP(9,12,9,12)
+  areaFloreros: AreaPC(10,10,10,10)
+  areaEnComun: AreaC(11,11,11,11)
+  areaCoordinador: AreaP(1,1,1,1)
+robots
+  robot rFlores
+  variables
+    id:numero
+  comenzar
+    RecibirMensaje(id,coordinador)
+    procesarEsquina
+    EnviarMensaje(id,coordinador) {envia el id, porque termino este robot}
+  fin
+  robot rCoordinador
+  variables
+    idUltimo:numero
+  comenzar
+    asignarIds
+    quienTerminoUltimo(idUltimo)
+    Informar('El_ult_robott_que_termino_es_el_robott',idUltimo)
+    juntarFlores
+  fin
+variables
+  r1: rFlores
+  r2: rFlores
+  r3: rFlores
+  r4: rFlores
+  coordinador: rCoordinador
+comenzar
+  {--- areas del robot 1 ---}
+  AsignarArea(r1,areaR1)
+  AsignarArea(r1,areaEnComun)
+  AsignarArea(r1,areaFloreros)
+  {--- areas del robot 2 ---}
+  AsignarArea(r2,areaR2)
+  AsignarArea(r2,areaEnComun)
+  AsignarArea(r2,areaFloreros)
+  {--- areas del robot 3 ---}
+  AsignarArea(r3,areaR3)
+  AsignarArea(r3,areaEnComun)
+  AsignarArea(r3,areaFloreros)
+  {--- areas del robot 4 ---}
+  AsignarArea(r4,areaR4)
+  AsignarArea(r4,areaFloreros)
+  AsignarArea(r4,areaEnComun)
+  {--- areas del robot coordinador ---}
+  AsignarArea(coordinador,areaCoordinador)
+  AsignarArea(coordinador,areaEnComun)
+  { - - iniciamos a los robotitos - - }
+  Iniciar(coordinador,1,1)
+  Iniciar(r1,9,9)
+  Iniciar(r2,9,10)
+  Iniciar(r3,9,11)
+  Iniciar(r4,9,12)
+fin

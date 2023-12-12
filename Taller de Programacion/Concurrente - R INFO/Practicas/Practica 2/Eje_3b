@@ -1,0 +1,125 @@
+{funciona pero no creo que este implementado correctamente. Ya que si serian mas recorrridos
+habria que modificar bastantes cosas para poder usar una estructura repetitiva.}
+programa eje3
+procesos
+  proceso juntarPapeles(ES cantP:numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      cantP:= cantP+1
+  fin
+  proceso juntarFlores(ES cantF: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF+1
+  fin
+  proceso recorrerTeamA (ES cantP:numero)
+  comenzar
+    cantP:=0
+    repetir 9
+      juntarPapeles(cantP)
+      mover
+    juntarPapeles(cantP)
+  fin
+  proceso recorrerTeamB (ES cantF:numero)
+  comenzar
+    cantF:=0
+    repetir 9
+      juntarFlores(cantF)
+      mover
+    juntarFlores(cantF)
+  fin
+  proceso actualizarSuma(ES suma: numero; E cantidad:numero)
+  comenzar
+    suma:= suma + cantidad
+  fin
+areas
+  areaA1: AreaP(1,1,10,1)
+  areaA1v2: AreaP(21,1,30,1)
+  areaA2: AreaP(11,1,20,1)
+  areaA2v2: AreaP(31,1,40,1)
+  areaB1: AreaP(1,5,10,5)
+  areaB1v2:AreaP(21,5,30,5)
+  areaB2: AreaP(11,5,20,5)
+  areaB2v2:AreaP(31,5,40,5)
+robots
+  robot rA1
+  variables
+    cantP:numero
+    termino:boolean
+  comenzar
+    derecha
+    recorrerTeamA(cantP)
+    EnviarMensaje(cantP,A2)
+    Pos(21,1)
+    RecibirMensaje(termino,A2)
+    recorrerTeamA(cantP)
+    EnviarMensaje(cantP,A2)
+  fin
+  robot rA2
+  variables
+    suma:numero
+    cantP:numero
+  comenzar
+    derecha
+    RecibirMensaje(suma,A1)
+    recorrerTeamA(cantP)
+    EnviarMensaje(V,A1)
+    actualizarSuma(suma,cantP)
+    Pos(31,1)
+    RecibirMensaje(cantP,A1)
+    actualizarSuma(suma,cantP)
+    recorrerTeamA(cantP)
+    actualizarSuma(suma,cantP)
+    Informar('cantidad_de_papeles_agarrados',suma)
+  fin
+  robot rB1
+  variables
+    cantF:numero
+    termino:numero
+  comenzar
+    derecha
+    recorrerTeamB(cantF)
+    EnviarMensaje(cantF,B2)
+    Pos(21,5)
+    RecibirMensaje(termino,B2)
+    recorrerTeamB(cantF)
+    EnviarMensaje(cantF,B2)
+  fin
+  robot rB2
+  variables
+    cantF:numero
+    suma:numero
+  comenzar
+    derecha
+    RecibirMensaje(suma,B1)
+    recorrerTeamB(cantF)
+    actualizarSuma(suma,cantF)
+    Pos(31,5)
+    EnviarMensaje(V,B1)
+    RecibirMensaje(cantF,B1)
+    actualizarSuma(suma,cantF)
+    recorrerTeamB(cantF)
+    actualizarSuma(suma,cantF)
+    Informar('Cantidad_de_flores_agarrados',suma)
+  fin
+variables
+  A1: rA1
+  A2: rA2
+  B1: rB1
+  B2: rB2
+comenzar
+  AsignarArea(A1,areaA1)
+  AsignarArea(A1,areaA1v2)
+  AsignarArea(A2,areaA2)
+  AsignarArea(A2,areaA2v2)
+  AsignarArea(B1,areaB1)
+  AsignarArea(B1,areaB1v2)
+  AsignarArea(B2,areaB2)
+  AsignarArea(B2,areaB2v2)
+  Iniciar(A1,1,1)
+  Iniciar(A2,11,1)
+  Iniciar(B1,1,5)
+  Iniciar(B2,11,5)
+fin

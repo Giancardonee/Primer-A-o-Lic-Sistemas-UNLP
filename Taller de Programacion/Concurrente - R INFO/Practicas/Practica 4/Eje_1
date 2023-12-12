@@ -1,0 +1,133 @@
+programa eje1
+procesos
+  proceso asignarIds 
+  comenzar
+    EnviarMensaje(1,cliente1)
+    EnviarMensaje(2,cliente2)
+    EnviarMensaje(3,cliente3)
+  fin
+  proceso juntarFlores (E cantF:numero)
+  comenzar
+    repetir cantF
+      tomarFlor
+  fin
+  proceso avanzarDejandoFlores (ES cantF:numero)
+  comenzar
+    mientras ( (PosCa<100) & (cantF > 0) )
+      depositarFlor
+      cantF:= cantF-1
+      mover
+  fin
+  proceso depositarNFlores (E N:numero)
+  comenzar
+    repetir N
+      depositarFlor
+  fin
+  proceso recorrerAvenida (E id:numero)
+  variables
+    flores: numero
+    caIni:numero
+    avIni:numero
+    ack:boolean
+  comenzar
+    mientras (PosCa<100)
+      avIni:= PosAv
+      caIni:= PosCa
+      Random(flores,1,4)
+      EnviarMensaje(id,servidor)
+      EnviarMensaje(flores,servidor)
+      EnviarMensaje(avIni,servidor)
+      EnviarMensaje(caIni+1,servidor)
+      RecibirMensaje(ack,servidor)
+      mover
+      juntarFlores(flores)
+      Pos(avIni,caIni) {debe volver a su calle anterior}
+      avanzarDejandoFlores(flores)
+      si (PosCa = 100)
+        EnviarMensaje(0,servidor)
+      sino
+        EnviarMensaje(1,servidor)
+  fin
+  proceso enviarACK_recibirTermino (E id:numero; ES termino:numero)
+  comenzar
+    si (id = 1)
+      EnviarMensaje(V,cliente1) {ack}
+      RecibirMensaje(termino,cliente1)
+    sino
+      si (id = 2)
+        EnviarMensaje(V,cliente2) {ack}
+        RecibirMensaje(termino,cliente2)
+      sino
+        si (id = 3)
+          EnviarMensaje(V,cliente3) {ack}
+          RecibirMensaje(termino,cliente3)
+  fin
+  proceso conexionCliente
+  variables
+    terminados:numero
+    id:numero
+    ca:numero
+    av:numero
+    flores:numero
+    termino:numero
+  comenzar
+    terminados:=0
+    mientras (terminados <3)
+      RecibirMensaje(id,*)
+      si (id = 1)
+        RecibirMensaje(flores,cliente1)
+        RecibirMensaje(av,cliente1)
+        RecibirMensaje(ca,cliente1)
+      sino
+        si (id = 2)
+          RecibirMensaje(flores,cliente2)
+          RecibirMensaje(av,cliente2)
+          RecibirMensaje(ca,cliente2)
+        sino
+          si (id = 3)
+            RecibirMensaje(flores,cliente3)
+            RecibirMensaje(av,cliente3)
+            RecibirMensaje(ca,cliente3)
+      Pos(av,ca)
+      depositarNFlores(flores)
+      Pos(100,100)
+      enviarACK_recibirTermino(id,termino)
+      si (termino = 0)
+        terminados:= terminados +1
+  fin
+areas
+  areaCliente1: AreaPC(1,1,1,100)
+  areaCliente2: AreaPC(2,1,2,100)
+  areaCliente3: AreaPC(3,1,3,100)
+  areaServidor: AreaP(100,100,100,100)
+robots
+  robot  rCliente
+  variables
+    id:numero
+  comenzar
+    RecibirMensaje(id,servidor)
+    recorrerAvenida(id)
+  fin
+  robot rServidor
+  comenzar  
+    asignarIds
+    conexionCliente
+  fin
+variables
+  cliente1: rCliente
+  cliente2: rCliente
+  cliente3: rCliente
+  servidor: rServidor
+comenzar
+  AsignarArea(cliente1,areaCliente1)
+  AsignarArea(cliente2,areaCliente2)
+  AsignarArea(cliente3,areaCliente3)
+  AsignarArea(servidor,areaCliente1)
+  AsignarArea(servidor,areaCliente2)
+  AsignarArea(servidor,areaCliente3)
+  AsignarArea(servidor,areaServidor)
+  Iniciar(servidor,100,100)
+  Iniciar(cliente1,1,1)
+  Iniciar(cliente2,2,1)   
+  Iniciar(cliente3,3,1)
+fin

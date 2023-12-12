@@ -1,0 +1,246 @@
+{A priori, por lo que entendi es que el robot ganador va a ser el que junte
+mas cantidad de elementos (cantPapeles + cantFlores) totales y NO por ronda }
+programa eje4
+procesos
+{---------------------------------------------------------------}
+  proceso juntarFlores (ES cantF:numero)
+  comenzar
+    cantF:=0
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF+1
+  fin
+  proceso juntarPapeles( ES cantP: numero)
+  comenzar
+    cantP:=0
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantP:= cantP+1
+  fin
+  proceso limpiarEsquina (ES cantElementos:numero)
+  variables
+    cantF:numero
+    cantP:numero
+  comenzar
+    juntarFlores(cantF)
+    juntarPapeles(cantP)
+    cantElementos:= ( cantF + cantP )
+  fin
+{---------------------------------------------------------------}
+{---------------------------------------------------------------}
+  proceso guardarEsquinaInicial (ES caInicial:numero; ES avInicial:numero)
+  comenzar
+    caInicial:= PosCa
+    avInicial:= PosAv
+  fin
+{---------------------------------------------------------------}
+  proceso asignarNrosRobots 
+  comenzar
+    EnviarMensaje(1,recolector1)
+    EnviarMensaje(2,recolector2)
+    EnviarMensaje(3,recolector3)
+    EnviarMensaje(4,recolector4)
+  fin
+{---------------------------------------------------------------}
+  proceso esquinaAleatoria
+  variables
+    calleAleatoria:numero
+    avenidaAleatoria:numero
+  comenzar
+    Random(calleAleatoria,25,75)
+    Random(avenidaAleatoria,25,75)
+    Pos(avenidaAleatoria,calleAleatoria)
+  fin
+{---------------------------------------------------------------}
+  proceso inicializarVariables(ES cantElementos:numero; ES soyMax:boolean)
+  comenzar
+    cantElementos:=0
+    soyMax:=F
+  fin
+{---------------------------------------------------------------}
+{---------------------------------------------------------------}
+  proceso esperarPosiblesAccesos (ES cantElementos:numero)
+  variables
+    terminoJuego:boolean
+    elementosEsquina:numero
+    calleIni:numero
+    avenidaIni:numero
+  comenzar
+    guardarEsquinaInicial(calleIni,avenidaIni)
+    RecibirMensaje(terminoJuego,fiscalizador)
+    mientras (terminoJuego = F)
+      esquinaAleatoria
+      limpiarEsquina(elementosEsquina)
+      cantElementos:= cantElementos + elementosEsquina
+      Pos(avenidaIni,calleIni) {vuelve a su esquina inicial}
+      RecibirMensaje(terminoJuego,fiscalizador) {queda esperando el prox mensaje}
+  fin
+{---------------------------------------------------------------}
+{---------------------------------------------------------------}
+  proceso comunicarleAlRobotAdecuado (E nroRobot:numero)
+  comenzar
+    si (nroRobot = 1)
+      EnviarMensaje(F,recolector1)
+    sino
+      si (nroRobot = 2)
+        EnviarMensaje(F,recolector2)
+      sino
+        si (nroRobot = 3)
+          EnviarMensaje(F,recolector3)
+        sino
+          si (nroRobot= 4)
+            EnviarMensaje(F,recolector4)
+  fin
+{---------------------------------------------------------------}
+  proceso permitirAccesoAleatorio 
+  variables
+    nroRobot:numero
+  comenzar
+    Random(nroRobot,1,4)
+    comunicarleAlRobotAdecuado(nroRobot)
+  fin
+{---------------------------------------------------------------}
+  proceso hacerAccesos
+  comenzar
+    repetir 10
+      permitirAccesoAleatorio
+  fin
+{---------------------------------------------------------------}
+  proceso terminarJuego
+  comenzar
+    EnviarMensaje(V,recolector1)
+    EnviarMensaje(V,recolector2)
+    EnviarMensaje(V,recolector3)
+    EnviarMensaje(V,recolector4)
+  fin
+{---------------------------------------------------------------}
+  proceso posicionarSiEsMaximo(E soyMax:boolean)
+  comenzar
+    si (soyMax=V)
+      Pos(50,50)
+  fin
+{---------------------------------------------------------------}
+  proceso comunicarCantidadDeElementos(E quienSoy:numero; E cantElementos:numero)
+  comenzar
+    EnviarMensaje(quienSoy,fiscalizador)
+    EnviarMensaje(cantElementos,fiscalizador)
+  fin
+{---------------------------------------------------------------}
+  proceso recibirMensajeDelMismoRobot (E quienEs:numero; ES cantTotal:numero)
+  comenzar
+    si (quienEs = 1)
+      RecibirMensaje(cantTotal,recolector1)
+    sino
+      si (quienEs = 2 )
+        RecibirMensaje(cantTotal,recolector2)
+      sino
+        si (quienEs = 3)
+          RecibirMensaje(cantTotal,recolector3)
+        sino
+          si (quienEs = 4)
+            RecibirMensaje(cantTotal,recolector4)
+  fin
+{---------------------------------------------------------------}
+  proceso chequearMax (ES cantMax:numero; ES robotMax:numero; E quienEs:numero; E suCantidad:numero)
+  comenzar
+    si ( suCantidad > cantMax)
+      robotMax:= quienEs
+      cantMax:= suCantidad
+      Informar(404)     
+  fin
+{---------------------------------------------------------------}
+  proceso calcularRobotMaximo (ES robotMax:numero)
+  variables
+    quienEs:numero
+    suCantidad:numero
+    cantMax:numero
+  comenzar
+    robotMax:=0
+    cantMax:=0
+    repetir 4
+      RecibirMensaje(quienEs,*)
+      recibirMensajeDelMismoRobot(quienEs,suCantidad)
+      chequearMax(cantMax,robotMax,quienEs,suCantidad)      
+    asignarMaximo(robotMax)
+  fin
+{---------------------------------------------------------------}
+  proceso asignarMaximo (E nroRobotMax:numero)
+  comenzar
+    si (nroRobotMax = 1)
+      EnviarMensaje(V,recolector1)
+    sino
+      EnviarMensaje(F,recolector1)
+    si (nroRobotMax = 2)
+      EnviarMensaje(V,recolector2)
+    sino
+      EnviarMensaje(F,recolector2)
+    si (nroRobotMax = 3)
+      EnviarMensaje(V,recolector3)
+    sino
+      EnviarMensaje(F,recolector3)
+    si (nroRobotMax = 4)
+      EnviarMensaje(V,recolector4)
+    sino
+      EnviarMensaje(F,recolector4)
+  fin
+{---------------------------------------------------------------}
+areas
+  cuadrado: AreaC(25,25,75,75)
+  esqJefe: AreaP(1,1,1,1)
+  esqIniR1: AreaP(25,1,25,1)
+  esqIniR2: AreaP(30,1,30,1)
+  esqIniR3: AreaP(35,1,35,1)
+  esqIniR4: AreaP(40,1,40,1)
+robots
+  robot rRecolector
+  variables
+    quienSoy:numero
+    terminoJuego:boolean
+    soyMax:boolean
+    cantElementos:numero
+  comenzar
+    inicializarVariables(cantElementos,soyMax) {p1=0, p2=F  (P1 y P2 son parametros 1 y 2)}
+    RecibirMensaje(quienSoy,fiscalizador) {le asigno el numero de robot}
+    esperarPosiblesAccesos(cantElementos) {queda en bucle hasta que se termine el juego}
+    comunicarCantidadDeElementos(quienSoy,cantElementos)
+    RecibirMensaje(soyMax,fiscalizador) {aca se entera si es maximo o no}
+    Informar('SoyMax',soyMax){para testear}
+    posicionarSiEsMaximo(soyMax)
+  fin
+  robot rFiscalizador
+  variables
+    nroRobotMax:numero
+  comenzar
+    asignarNrosRobots 
+    hacerAccesos {permite ingresar a robots randoms (10 accesos) }
+    terminarJuego {les avisa a los demas robots que termino el juego, para que salgan del bucle}
+    calcularRobotMaximo(nroRobotMax) {calculo, y le aviso al robotMax que es el maximo.}
+  fin
+variables
+  fiscalizador: rFiscalizador
+  recolector1: rRecolector
+  recolector2: rRecolector
+  recolector3: rRecolector
+  recolector4: rRecolector
+comenzar
+  {------------------------------------------------------}
+  {le asigno el area compartida a todos los recolectores}
+  AsignarArea(recolector1,cuadrado)
+  AsignarArea(recolector2,cuadrado)
+  AsignarArea(recolector3,cuadrado)
+  AsignarArea(recolector4,cuadrado)
+  {------------------------------------------------------}
+  {le asigno la esquina inicial a cada robot}
+  AsignarArea(recolector1,esqIniR1)
+  AsignarArea(recolector2,esqIniR2)
+  AsignarArea(recolector3,esqIniR3)
+  AsignarArea(recolector4,esqIniR4)
+  AsignarArea(fiscalizador,esqJefe)
+  {------------------------------------------------------}
+  {inicializo a cada robotito}
+  Iniciar(fiscalizador,1,1)
+  Iniciar(recolector1,25,1)
+  Iniciar(recolector2,30,1)
+  Iniciar(recolector3,35,1)
+  Iniciar(recolector4,40,1)
+fin

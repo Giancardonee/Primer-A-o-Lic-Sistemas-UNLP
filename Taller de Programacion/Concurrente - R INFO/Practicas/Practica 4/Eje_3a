@@ -1,0 +1,82 @@
+programa eje3a
+procesos
+  proceso juntarPapeles 
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso enviarMensajeAjuntadores (E id:numero)
+  variables
+    termine:boolean
+  comenzar
+    si (id = 1)
+      EnviarMensaje(V,juntador2)
+      EnviarMensaje(V,juntador3)
+    sino
+      si (id = 2)
+        EnviarMensaje(V,juntador1)
+        EnviarMensaje(V,juntador3)
+      sino
+        si (id = 3)
+          EnviarMensaje(V,juntador1)
+          EnviarMensaje(V,juntador2)
+    RecibirMensaje(termine,*)
+    RecibirMensaje(termine,*)
+  fin
+  proceso etapaCada5Cuadras
+  comenzar
+    repetir 5
+      juntarPapeles
+      mover  
+  fin
+  proceso ultimaEtapa
+  comenzar
+    repetir 4
+      juntarPapeles
+      mover
+  fin
+  proceso recorrerAvenida (E id:numero)
+  comenzar
+    repetir 19 {19*5 = 95}
+      etapaCada5Cuadras
+      enviarMensajeAjuntadores(id)
+    ultimaEtapa
+  fin
+  proceso asignarIds
+  comenzar
+    EnviarMensaje(1,juntador1)
+    EnviarMensaje(2,juntador2)
+    EnviarMensaje(3,juntador3)
+  fin
+areas
+  areaJuntador1: AreaP(1,1,1,100)
+  areaJuntador2: AreaP(2,1,2,100)
+  areaJuntador3: AreaP(3,1,3,100)
+  areaCoordinador: AreaP(5,1,5,1) {no dice el area,asique se la elegi yo}
+robots
+  robot rJuntador
+  variables
+    id:numero
+  comenzar
+    RecibirMensaje(id,coordinador)
+    recorrerAvenida(id)
+  fin
+  robot rCoordinador
+  comenzar
+    asignarIds
+  fin
+variables
+  juntador1: rJuntador
+  juntador2: rJuntador
+  juntador3: rJuntador
+  coordinador: rCoordinador
+comenzar
+  AsignarArea(juntador1,areaJuntador1)
+  AsignarArea(juntador2,areaJuntador2)
+  AsignarArea(juntador3,areaJuntador3)
+  AsignarArea(coordinador,areaCoordinador)
+  Iniciar (juntador1,1,1)
+  Iniciar (juntador2,2,1)
+  Iniciar (juntador3,3,1)
+  Iniciar (coordinador,5,1)
+fin

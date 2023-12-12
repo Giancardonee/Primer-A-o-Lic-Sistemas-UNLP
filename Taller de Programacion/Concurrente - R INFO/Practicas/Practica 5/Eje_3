@@ -1,0 +1,119 @@
+programa eje3
+procesos  
+  proceso juntarUnaFlor(ES cantF:numero)
+  comenzar
+    si (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF+1
+  fin
+  proceso juntarFlores (ES cantF:numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF+1
+  fin
+  proceso vaciarBolsaFlores (ES cantF:numero)
+  variables
+    avIni:numero
+    caIni:numero
+  comenzar
+    avIni:= PosAv
+    caIni:= PosCa
+    BloquearEsquina(10,10)
+    Pos(10,10)
+   {--------------------}
+    repetir cantF
+      depositarFlor
+   {--------------------}
+    Pos(avIni,caIni)
+    LiberarEsquina(10,10)   
+    EnviarMensaje(V,cosechador) {le avisan al jefe que acceda a la esquina a juntar las flores}
+    cantF:=0
+  fin
+  proceso procesarEsquina (ES cantF:numero; ES cantCuadras:numero)
+  comenzar
+    si (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF+1
+    cantCuadras:= cantCuadras +1
+    si ( (cantCuadras = 5) ) 
+      cantCuadras:=0
+      si (cantF>0)
+        vaciarBolsaFlores (cantF)
+    mover
+  fin
+  proceso recorrerCalle
+  variables
+    cantCuadras:numero
+    cantF:numero
+  comenzar
+    derecha {para que suba las calles}
+    cantCuadras:=0
+    repetir 99
+      procesarEsquina(cantF,cantCuadras)
+    {procesamos la ultima esquina, sin movernos}
+    si (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:=cantF+1
+    si ( cantF>0 )
+    vaciarBolsaFlores(cantF)
+  fin
+  proceso procesarEsquinaCosechador (ES cantF:numero; E avIni:numero; E caIni:numero)
+  comenzar
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    juntarFlores(cantF)
+    Pos(avIni,caIni)
+    LiberarEsquina(10,10)
+  fin
+  proceso cosecharFlores (ES cantF:numero) 
+  variables
+    terminados:numero
+    avIni:numero
+    caIni:numero
+    accederEsquina:boolean
+  comenzar
+    avIni:= PosAv
+    caIni:= PosCa
+    cantF:=0
+    terminados:=0
+    mientras (terminados <2)
+      RecibirMensaje(accederEsquina,*)
+      si (accederEsquina = V )
+        procesarEsquinaCosechador(cantF,avIni,caIni)
+      sino
+        terminados:= terminados +1 { su le lelga F, es porque termino un robot}
+  fin 
+areas
+  areaRecolector1: AreaP(1,3,100,3)
+  areaRecolector2: AreaP(1,4,100,4)
+  esquinaCosechador: AreaP (1,5,1,5)
+  esquinaCompartida: AreaC(10,10,10,10)
+robots
+  robot rRecolector
+  comenzar
+    recorrerCalle
+    EnviarMensaje(F,cosechador){le avisa al cosechador que termino}
+  fin
+  robot rCosechador
+  variables
+    cantF:numero
+  comenzar
+    cosecharFlores(cantF)
+    Informar('cant_flores_recolectadas',cantF)
+  fin
+variables
+  recolector1: rRecolector
+  recolector2: rRecolector
+  cosechador: rCosechador
+comenzar
+  AsignarArea(cosechador,esquinaCompartida)
+  AsignarArea(cosechador,esquinaCosechador)
+  AsignarArea(recolector1,areaRecolector1)
+  AsignarArea(recolector2,areaRecolector2)
+  AsignarArea(recolector1,esquinaCompartida)
+  AsignarArea(recolector2,esquinaCompartida)
+  Iniciar(recolector1,1,3)
+  Iniciar(recolector2,1,4)
+  Iniciar(cosechador,1,5)
+fin

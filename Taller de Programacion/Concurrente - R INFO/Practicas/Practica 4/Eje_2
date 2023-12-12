@@ -1,0 +1,137 @@
+programa eje2
+procesos
+  proceso dejarPapelesProductores (ES cantP:numero)
+  comenzar
+    repetir 5
+      depositarPapel
+      cantP:= cantP-1
+  fin
+  proceso dejarPapelesEnEsquina (ES cantP:numero; E avAct:numero; E caAct:numero)
+  comenzar
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    dejarPapelesProductores(cantP)
+    Pos(avAct,caAct)
+    LiberarEsquina(50,50)
+  fin
+  proceso juntarPapelesProductor
+  variables
+    avAct:numero
+    caAct:numero
+    cantP:numero
+  comenzar
+    avAct:= PosAv
+    caAct:= PosCa
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      cantP:= cantP+1
+      si (cantP = 5)
+        dejarPapelesEnEsquina(cantP,avAct,caAct)
+  fin
+  proceso recorrerAvenidaProductor
+  comenzar
+    repetir 99
+      juntarPapelesProductor
+      mover
+    juntarPapelesProductor
+  fin
+  proceso juntarPapelesConsumidor (ES cantP:numero; E papelesRandom:numero)
+  comenzar
+    cantP:=0
+    repetir (papelesRandom)
+      si (HayPapelEnLaEsquina)
+        tomarPapel
+        cantP:= cantP+1
+  fin
+  proceso dejarPapelesConsumidor(E cantP: numero)
+  comenzar
+    repetir cantP
+      depositarPapel
+  fin
+  proceso procesarEsquinaConsumidor (ES pude:boolean; E papelesRandom:numero; ES cantP:numero)
+  comenzar
+    juntarPapelesConsumidor(cantP,papelesRandom)
+    si (cantP >= papelesRandom)
+      pude:=V
+    sino {es porque la cantidad de papeles random es mayor a la que esta en la esquina}
+      si (cantP < papelesRandom)
+        pude:=F
+        dejarPapelesConsumidor(cantP) {las vuelve a depositar en la esquina 50,50}
+  fin
+  proceso consumidorTomarPapelesEsquina (ES pude:boolean; E avAct:numero; E caAct:numero; ES cantP:numero)
+  variables
+    papelesRandom:numero
+  comenzar
+    Random(papelesRandom,2,5)
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    procesarEsquinaConsumidor(pude,papelesRandom,cantP)    
+    Pos(avAct,caAct)
+    LiberarEsquina(50,50)
+  fin
+  proceso chequearSiPudoAgarrarFlor (E pude: boolean; ES cantIntentos:numero; E cantP:numero)
+  comenzar
+    si (pude = F)
+      cantIntentos:= cantIntentos +1
+    sino
+      dejarPapelesConsumidor(cantP) {los deposita en su esquina inicial}
+      cantIntentos:= 0 
+  fin
+  proceso consumirProduccion
+  variables
+    avIni:numero
+    caIni:numero
+    intentos:numero 
+    cantP:numero
+    pudo: boolean
+  comenzar
+    intentos:=0
+    avIni:= PosAv
+    caIni:= PosCa
+    mientras (intentos <8)
+      consumidorTomarPapelesEsquina(pudo,avIni,caIni,cantP)
+      chequearSiPudoAgarrarFlor(pudo,intentos,cantP)
+  fin
+areas
+  {areas para productores}
+  areaProductor1: AreaP(5,1,5,100)
+  areaProductor2: AreaP(10,1,10,100)
+  {area compartida por todos los robots} 
+  esquinaCompartida: AreaC(50,50,50,50)
+  {areas para consumidores}
+  areaConsumidor1: AreaP (11,1,11,1)
+  areaConsumidor2: AreaP (12,1,12,1)
+robots
+  robot rProductor
+  comenzar
+    recorrerAvenidaProductor
+  fin
+  robot rConsumidor
+  variables
+    id:numero
+    puedoEmpezar:boolean
+  comenzar
+    consumirProduccion
+  fin
+variables
+  productor1: rProductor
+  productor2: rProductor
+  consumidor1: rConsumidor
+  consumidor2: rConsumidor
+comenzar
+  {-- asignamos las areas a los productores --}
+  AsignarArea(productor1,areaProductor1)
+  AsignarArea(productor1,esquinaCompartida)
+  AsignarArea(productor2,areaProductor2)
+  AsignarArea(productor2,esquinaCompartida)
+  {-- asignamos las areas a los consumidores --}
+  AsignarArea(consumidor1,areaConsumidor1)
+  AsignarArea(consumidor1,esquinaCompartida)
+  AsignarArea(consumidor2,areaConsumidor2)
+  AsignarArea(consumidor2,esquinaCompartida)
+  {-- iniciamos a los robots --}
+  Iniciar(productor1,5,1)
+  Iniciar(productor2,10,1)
+  Iniciar(consumidor1,11,1)
+  Iniciar(consumidor2,12,1)
+fin

@@ -1,0 +1,96 @@
+programa eje3
+procesos
+  proceso cumplePapeles(E cantF:numero; E cantP:numero; ES cantSupera: numero)
+  comenzar
+    si (cantP = (cantF+1))
+      cantSupera:= cantSupera+1
+  fin
+  proceso dejarTodasLasFlores(E cantF:numero)
+  comenzar
+    mientras (HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+  proceso dejarTodosLosPapeles(E cantP:numero)
+  comenzar
+    mientras (HayPapelEnLaBolsa)
+      depositarPapel
+  fin
+  proceso juntarFlores (ES cantF:numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF+1
+  fin
+  proceso juntarPapeles (ES cantP: numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      cantP:= cantP+1
+  fin
+  proceso procesarEsquina(ES cantP:numero; ES cantF:numero)
+  comenzar
+    juntarFlores(cantF)
+    dejarTodasLasFlores(cantF)
+    juntarPapeles(cantP)
+    dejarTodosLosPapeles(cantP)
+  fin
+  proceso mirarHaciaArriba
+  comenzar
+    repetir 3
+      derecha
+  fin
+  proceso moverHaciaArriba(E nVeces:numero)
+  comenzar
+    repetir nVeces
+      mover
+  fin
+  proceso moverHaciaElCostado (E nVeces: numero; ES cantSupera:numero)
+  variables
+    cantP:numero
+    cantF:numero
+  comenzar
+    cantF:=0
+    cantP:=0
+    repetir nVeces
+      procesarEsquina(cantP,cantF)
+      mover
+    procesarEsquina(cantP,cantF)  {si no lo hago no me procesa la ultima esquina}
+    cumplePapeles(cantF,cantP,cantSupera){una vez que termino el escalon, chequeo}
+  fin
+  proceso hacerEscalones (ES cantSupera:numero)
+  variables
+    i:numero
+    cantF:numero
+    cantP:numero
+  comenzar
+    i:= 1
+    cantSupera:=0
+    repetir 4 {cantEscalones}
+      moverHaciaArriba(i)
+      derecha
+      moverHaciaElCostado(i,cantSupera)
+      mirarHaciaArriba
+      i:= i+1
+  fin
+areas
+  ciudad : AreaC(12,6,32,24)
+robots
+  robot tipo1
+  variables
+    cantSupera:numero
+  comenzar
+    hacerEscalones(cantSupera)
+    Informar('Escalones_Donde_Cumple_Superar_Son ',cantSupera)
+  fin
+variables
+  robot1:tipo1
+  robot2: tipo1
+  robot3: tipo1
+comenzar
+  AsignarArea(robot1,ciudad)
+  AsignarArea(robot2,ciudad)
+  AsignarArea(robot3,ciudad)
+  Iniciar(robot1,12,14)
+  Iniciar(robot2,17,10)
+  Iniciar(robot3,22,6)
+fin

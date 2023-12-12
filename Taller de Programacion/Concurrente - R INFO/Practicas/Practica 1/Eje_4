@@ -1,0 +1,81 @@
+programa eje4
+procesos
+  proceso limpiarImpar 
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso limpiarPar
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso limpiarAreaImpar
+  comenzar
+    repetir 99
+      limpiarImpar
+      mover
+    limpiarImpar
+  fin
+  proceso limpiarAreaPar
+  comenzar
+    repetir 99
+      limpiarPar
+      mover
+    limpiarPar
+  fin
+  proceso recorrerAreasPares (E avIni: numero; E avFin:numero)
+  variables
+    avActual:numero
+    cantAvenidas:numero
+  comenzar
+    cantAvenidas:= (avFin-avIni)+1
+    avActual:= avIni
+    repetir cantAvenidas
+      limpiarAreaPar
+      si (avActual < avFin) {esto lo hago para avanzar a la siguiente avenida siempre que no se me termine la ciudad}
+        avActual:= avActual+1
+        Pos(avActual,1)
+  fin
+  proceso recorrerAreasImpares (E avIni: numero; E avFin:numero)
+  variables
+    avActual: numero
+    cantAvenidas:numero
+  comenzar
+    avActual:= avIni
+    cantAvenidas:= (avFin - avIni)+1
+    repetir cantAvenidas
+      limpiarAreaImpar
+      si (avActual < avFin)
+        avActual:= avActual+1
+        Pos(avActual,1)
+  fin
+areas
+  ciudad1: AreaP(1,1,25,100)
+  ciudad2: AreaP(26,1,50,100)
+  ciudad3: AreaP(51,1,75,100)
+  ciudad4: AreaP(76,1,100,100)
+robots
+  robot tipo1
+  comenzar
+    recorrerAreasImpares(1,25)
+    Pos(51,1)
+    recorrerAreasImpares(51,75)
+  fin
+  robot tipo2
+  comenzar
+    recorrerAreasPares(26,50)
+    Pos(76,1)
+    recorrerAreasPares(76,100)
+  fin
+variables
+  robot1: tipo1
+  robot2: tipo2
+comenzar
+  AsignarArea(robot1,ciudad1)
+  AsignarArea(robot1,ciudad3)
+  AsignarArea(robot2,ciudad2)
+  AsignarArea(robot2,ciudad4)
+  Iniciar(robot1,1,1)
+  Iniciar(robot2,26,1)
+fin

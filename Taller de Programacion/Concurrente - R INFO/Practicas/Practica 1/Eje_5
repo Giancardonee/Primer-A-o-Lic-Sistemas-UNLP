@@ -1,0 +1,167 @@
+programa eje6
+procesos
+  {-------------------------------------------}
+  {procesos para robots juntadores de flores}
+  proceso juntarFlores 
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso dejarTodasLasFlores 
+  comenzar
+    mientras (HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+  proceso chequearUltRecorrido(ES result:boolean; E cantR:numero; E rTotales:numero)
+  comenzar
+    si (cantR < rTotales)
+      result:= F
+    sino
+      result:= V
+  fin
+  proceso procesarUltimaEsquinaFlores (E esUltimoRecorrido: boolean)
+  comenzar
+    si (esUltimoRecorrido = V)
+      dejarTodasLasFlores
+    sino
+      posicionarFlor(esUltimoRecorrido)
+      juntarFlores
+  fin
+  proceso recorridoFlores(E cuadras: numero; E esUltRecorrido:boolean)
+  comenzar
+    repetir cuadras
+      juntarFlores
+      mover
+    procesarUltimaEsquinaFlores(esUltRecorrido)
+  fin
+  proceso posicionarFlor(E esUltimoRecorrido:boolean)
+  comenzar 
+    si (esUltimoRecorrido = F)
+      si ( (PosAv=15) & (PosCa=75) )
+        Pos(1,(PosCa+5))
+      sino
+        Pos(70,(PosCa+5))
+  fin
+  proceso hacerRecorridosFlores (E cantRecorridos:numero; E cuadras:numero)
+  variables
+    recorridoAct:numero
+    ultimoRecorrido:boolean
+  comenzar
+    derecha
+    recorridoAct:= 0
+    repetir cantRecorridos
+      recorridoAct:= recorridoAct+1
+      chequearUltRecorrido(ultimoRecorrido,recorridoAct,cantRecorridos)
+      recorridoFlores(cuadras,ultimoRecorrido)
+  fin
+  proceso asignarDatosRobotsFlores
+  comenzar
+    si ( (PosAv=1)&(PosCa=75) ) 
+      hacerRecorridosFlores(2,14)
+    sino
+      hacerRecorridosFlores(2,30)
+  fin
+  {-------------------------------------------}
+  {procesos para robots juntadores de papeles}
+  proceso juntarPapeles
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso dejarTodosLosPapeles
+  comenzar
+    mientras (HayPapelEnLaBolsa)
+      depositarPapel
+  fin
+  proceso recorridoPapeles (E cuadras:numero)
+  comenzar
+    repetir cuadras
+      juntarPapeles
+      mover
+    juntarPapeles
+  fin
+  proceso posicionarPapel (E esUltimoRecorrido: boolean)
+  comenzar
+    si (esUltimoRecorrido = F)
+      si ( (PosAv=75) & (PosCa=100) )
+        Pos((PosAv+5),(80))
+      sino
+        Pos((PosAv+5), 1)      
+  fin
+  proceso procesarPrimerEsquina (E avIni:numero; E calleIni:numero)
+  comenzar
+    Pos(avIni,calleIni)
+    dejarTodosLosPapeles
+  fin
+  proceso hacerRecorridoPapeles (E recorridosTotales:numero; E cuadras:numero)
+  variables
+    recorridosAct:numero
+    ultimoRecorrido:boolean
+  comenzar
+    recorridosAct:=0
+    repetir recorridosTotales
+      recorridosAct:= recorridosAct+1
+      recorridoPapeles(cuadras)
+      chequearUltRecorrido(ultimoRecorrido,recorridosAct,recorridosTotales)
+      posicionarPapel(ultimoRecorrido)
+  fin
+  proceso asignarDatosRobotsPapeles(E avIni:numero; E calleIni:numero)
+  comenzar
+    si ( (PosAv=10) & (PosCa=1) )
+      hacerRecorridoPapeles(2,9)
+    sino
+      hacerRecorridoPapeles(2,20)
+    procesarPrimerEsquina(avIni,calleIni) 
+  fin
+  {------------------------------------------------}
+areas
+{areas para juntadores de flores}
+  {robot1}
+  area1Robot1: AreaP(1,75,15,75)
+  area2Robot1: AreaP(1,80,15,80)
+  {robot3}
+  area1Robot3: AreaP(70,10,100,10)
+  area2Robot3: AreaP(70,15,100,15)
+{areas para juntadores de papeless}
+  {robot2}
+  area1Robot2: AreaP(75,80,75,100)
+  area2Robot2: AreaP(80,80,80,100)
+  {robot4}
+  area1Robot4: AreaP(10,1,10,10)
+  area2Robot4: AreaP(15,1,15,10)
+robots
+  {------------------------------------------------}
+  {programa principal para juntadores de flores}
+  robot juntadorFlores
+  comenzar
+    asignarDatosRobotsFlores
+  fin
+  {------------------------------------------------}
+  {programa principal para juntadores de papeles}
+  robot juntadorPapeles
+  comenzar
+    asignarDatosRobotsPapeles(PosAv,PosCa)
+  fin
+variables
+  robot1: juntadorFlores
+  robot2: juntadorPapeles
+  robot3: juntadorFlores
+  robot4: juntadorPapeles
+comenzar
+  {robots limpiadores de flores}
+  AsignarArea(robot1,area1Robot1)
+  AsignarArea(robot1,area2Robot1)
+  AsignarArea(robot3,area1Robot3)
+  AsignarArea(robot3,area2Robot3)
+  {robots limpiadores de papeles}
+  AsignarArea(robot2,area1Robot2)
+  AsignarArea(robot2,area2Robot2)
+  AsignarArea(robot4,area1Robot4)
+  AsignarArea(robot4,area2Robot4)
+  {iniciamos robots juntadores flores}
+  Iniciar(robot3,70,10)
+  Iniciar(robot1,1,75)
+  {iniciamos robots juntadores papeles}
+  Iniciar(robot2,75,80)
+  Iniciar(robot4,10,1)
+fin  

@@ -1,0 +1,91 @@
+programa eje3
+procesos
+  proceso juntarPapeles(ES cantP:numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      cantP:= cantP+1
+  fin
+  proceso juntarFlores(ES cantF: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF+1
+  fin
+  proceso recorrerTeamA (ES cantP:numero)
+  comenzar
+    cantP:=0
+    derecha
+    repetir 9
+      juntarPapeles(cantP)
+      mover
+    juntarPapeles(cantP)
+  fin
+  proceso recorrerTeamB (ES cantF:numero)
+  comenzar
+    cantF:=0
+    derecha
+    repetir 9
+      juntarFlores(cantF)
+      mover
+    juntarFlores(cantF)
+  fin
+  proceso actualizarSuma(ES suma: numero; E cantidad:numero)
+  comenzar
+    suma:= suma + cantidad
+  fin
+areas
+  areaA1: AreaP(1,1,10,1)
+  areaA2: AreaP(11,1,20,1)
+  areaB1: AreaP(1,5,10,5)
+  areaB2: AreaP(11,5,20,5)
+robots
+  robot rA1
+  variables
+    cantP:numero
+  comenzar
+    recorrerTeamA(cantP)
+    EnviarMensaje(cantP,A2)
+  fin
+  robot rA2
+  variables
+    suma:numero
+    cantP:numero
+  comenzar
+    RecibirMensaje(suma,A1)
+    recorrerTeamA(cantP)
+    actualizarSuma(suma,cantP)
+    Informar('cantidad_de_papeles_agarrados',suma)
+  fin
+  robot rB1
+  variables
+    cantF:numero
+  comenzar
+    recorrerTeamB(cantF)
+    EnviarMensaje(cantF,B2)
+  fin
+  robot rB2
+  variables
+    cantF:numero
+    suma:numero
+  comenzar
+    RecibirMensaje(suma,B1)
+    recorrerTeamB(cantF)
+    actualizarSuma(suma,cantF)
+    Informar('Cantidad_de_flores_agarradas',suma)
+  fin
+variables
+  A1: rA1
+  A2: rA2
+  B1: rB1
+  B2: rB2
+comenzar
+  AsignarArea(A1,areaA1)
+  AsignarArea(A2,areaA2)
+  AsignarArea(B1,areaB1)
+  AsignarArea(B2,areaB2)
+  Iniciar(A1,1,1)
+  Iniciar(A2,11,1)
+  Iniciar(B1,1,5)
+  Iniciar(B2,11,5)
+fin

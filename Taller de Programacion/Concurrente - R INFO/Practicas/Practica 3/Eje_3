@@ -1,0 +1,142 @@
+{
+DUDAS: COMO PUEDO HACER SI UN ROBOT SABE QUE NO HAY MAS FLORES, QUE LOS DEMAS
+ROBOTS NO INTENTEN ACCEDER A ESA ESQUINA Y TERMINE EL PROGRAMA? 
+   [[[ TENGO QUE ENVIAR UN MENSAJE? COMO LO HARIA? ]]] 
+}
+programa eje3
+procesos
+  proceso asignarIds
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+  fin
+  proceso asignarEsquinaRandom
+  variables
+    avRandom:numero
+    caRandom:numero
+  comenzar
+    Random(avRandom,2,10)
+    Random(caRandom,2,10)
+    {------- robot 1 ---------}
+    EnviarMensaje(avRandom,r1)
+    EnviarMensaje(caRandom,r1)
+    {------- robot 2 ---------}
+    EnviarMensaje(avRandom,r2)
+    EnviarMensaje(caRandom,r2)
+    {------- robot 3 ---------}
+    EnviarMensaje(avRandom,r3)
+    EnviarMensaje(caRandom,r3)
+    {------- robot 4 ---------}
+    EnviarMensaje(avRandom,r4)
+    EnviarMensaje(caRandom,r4)
+  fin
+  proceso procesarEsquina(ES cantF:numero; ES hayFlor: boolean)
+  comenzar
+    si (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF+1
+    sino
+      hayFlor:= F
+  fin
+  proceso agarrarFlores(ES cantF:numero)
+  variables
+    avRandom:numero
+    caRandom:numero
+    avIni:numero
+    caIni:numero
+    hayFlor:boolean
+  comenzar
+    cantF:=0
+    avIni:= PosAv
+    caIni:= PosCa
+    hayFlor:=V
+    RecibirMensaje(avRandom,robotJefe)
+    RecibirMensaje(caRandom,robotJefe)
+    mientras (hayFlor)
+      BloquearEsquina(avRandom,caRandom)
+      Pos(avRandom,caRandom)
+      procesarEsquina(cantF,hayFlor)
+      Pos(avIni,caIni)
+      LiberarEsquina(avRandom,caRandom)
+  fin
+  proceso chequearMaximo (ES max:numero;E suCantidad:numero; ES robotMax:numero; E nroRobot:numero)
+  comenzar
+    si (suCantidad > max)
+      max:= suCantidad
+      robotMax:= nroRobot
+  fin
+  proceso comunicarseConFloreros(ES robotMax:numero) 
+  variables
+    max:numero
+    suCantidad:numero
+    id:numero
+  comenzar
+    max:=0
+    robotMax:= 0
+    repetir 4
+      RecibirMensaje(id,*)
+      si (id = 1)
+        RecibirMensaje(suCantidad,r1)
+      sino
+        si (id = 2)
+          RecibirMensaje(suCantidad,r2)
+        sino
+          si (id = 3)
+            RecibirMensaje(suCantidad,r3)
+          sino
+            si (id = 4)
+              RecibirMensaje(suCantidad,r4)
+      chequearMaximo(max,suCantidad,robotMax,id)
+  fin
+areas
+  cuadrante: AreaC(2,2,10,10)
+  inicialR1: AreaP(2,1,2,1)
+  inicialR2: AreaP(3,1,3,1)
+  inicialR3: AreaP(4,1,4,1)
+  inicialR4: AreaP(5,1,5,1)
+  inicialJefe: AreaP(1,1,1,1)
+robots
+  robot rFlorero
+  variables
+    id:numero
+    cantF:numero
+  comenzar
+    {---- identificamos al robot -----}
+    RecibirMensaje(id,robotJefe)
+    agarrarFlores(cantF)
+    EnviarMensaje(id,robotJefe)
+    EnviarMensaje(cantF,robotJefe)
+  fin
+  robot rJefe
+  variables
+    robotMax:numero
+  comenzar
+    asignarIds
+    asignarEsquinaRandom
+    comunicarseConFloreros(robotMax)
+    Informar('El_robott_con_mas_flores_es_el_robott',robotMax)
+  fin
+variables
+  r1: rFlorero
+  r2: rFlorero
+  r3: rFlorero
+  r4: rFlorero
+  robotJefe: rJefe
+comenzar
+  AsignarArea(r1,inicialR1)
+  AsignarArea(r1,cuadrante)
+  AsignarArea(r2,inicialR2)
+  AsignarArea(r2,cuadrante)
+  AsignarArea(r3,inicialR3)
+  AsignarArea(r3,cuadrante)
+  AsignarArea(r4,inicialR4)
+  AsignarArea(r4,cuadrante)
+  AsignarArea(robotJefe,inicialJefe)
+  Iniciar(robotJefe,1,1)
+  Iniciar(r1,2,1)
+  Iniciar(r2,3,1)
+  Iniciar(r3,4,1)
+  Iniciar(r4,5,1)
+fin

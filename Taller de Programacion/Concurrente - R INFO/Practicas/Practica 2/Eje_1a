@@ -1,0 +1,61 @@
+programa eje1
+procesos
+  proceso juntarFlores (ES cantF: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF + 1
+  fin
+  proceso recorrerAvenida (ES flores: numero)
+  comenzar
+    flores:=0
+    repetir 9
+      juntarFlores(flores)
+      mover
+    juntarFlores(flores)
+  fin
+  proceso hacerDiferencia (E flores:numero; E floresOtro:numero; ES dif:numero)
+  comenzar
+    si (flores>floresOtro)
+      dif:= flores - floresOtro
+    sino 
+      dif:= floresOtro - flores
+  fin
+  proceso comunicar (E flores:numero)
+  variables
+    diferencia:numero
+    floresOtro:numero
+  comenzar
+    si (PosAv=1) {es porque es el robot1}
+      EnviarMensaje (flores,robot2)
+      RecibirMensaje(floresOtro,robot2)
+      si (flores>floresOtro)
+        hacerDiferencia(flores,floresOtro,diferencia)
+        Informar(diferencia)
+    sino
+      EnviarMensaje(flores,robot1)
+      RecibirMensaje(floresOtro,robot1)
+      si (flores>floresOtro)
+        hacerDiferencia(flores,floresOtro,diferencia)
+        Informar(diferencia)
+  fin
+areas
+  areaRobot1: AreaP(1,1,1,10)
+  areaRobot2: AreaP(2,11,2,20)
+robots
+  robot juntadorFlores
+  variables
+    flores:numero
+  comenzar
+    recorrerAvenida(flores)
+    comunicar(flores)
+  fin
+variables
+  robot1: juntadorFlores
+  robot2: juntadorFlores
+comenzar
+  AsignarArea(robot1,areaRobot1)
+  AsignarArea(robot2,areaRobot2)
+  Iniciar(robot1,1,1)
+  Iniciar(robot2,2,11)
+fin

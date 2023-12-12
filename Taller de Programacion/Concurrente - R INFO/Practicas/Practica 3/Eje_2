@@ -1,0 +1,207 @@
+programa eje2
+procesos
+{------ modulos compartidos -----------}
+  proceso hacerAlto (E alto: numero)
+  comenzar
+    repetir alto
+      mover
+  fin
+  proceso hacerAncho(E ancho:numero)
+  comenzar
+    repetir ancho
+      mover
+  fin
+{-----------------------------------------------}
+{-------- modulos para robot flores -------------}
+  proceso juntarFlores (ES cantF:numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF+1
+  fin
+  proceso escalonEsquinaCompartidaFlores(ES cantF:numero)
+  comenzar
+    mover
+    juntarFlores(cantF)
+    derecha
+    BloquearEsquina(16,16)
+    mover
+    EnviarMensaje(1,r3)
+    juntarFlores(cantF)
+    repetir 2
+      derecha      
+    mover
+    LiberarEsquina(16,16)
+  fin
+  proceso subirDerechaF (ES cantF:numero)
+  variables
+    tam:numero
+  comenzar
+    tam:=5
+    repetir 4
+      hacerAlto(tam)
+      juntarFlores(cantF)
+      derecha
+      hacerAncho(tam)
+      juntarFlores(cantF)
+      repetir 3
+        derecha
+      tam:=tam-1
+  fin
+  proceso subirIzquierdaF(ES cantF:numero)
+  variables
+    tam:numero
+  comenzar
+    tam:=2
+    repetir 4
+      hacerAncho(tam)
+      juntarFlores(cantF)
+      derecha
+      hacerAlto(tam)
+      juntarFlores(cantF)
+      repetir 3
+        derecha
+      tam:=tam+1
+    derecha
+    mover
+  fin
+  proceso escaleraFlor (ES cantF:numero)
+  comenzar
+    subirDerechaF(cantF)
+    escalonEsquinaCompartidaFlores(cantF)
+    subirIzquierdaF(cantF)
+  fin
+{-----------------------------------------------}
+{--------- modulos para robot papeles ------------}
+  proceso juntarPapeles(ES cantP:numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      cantP:=cantP+1
+  fin
+  proceso subirIzquierdaP(ES cantP:numero)
+  variables
+    tam:numero
+  comenzar
+    tam:=5
+    repetir 4
+      hacerAlto(tam)
+      juntarPapeles(cantP)
+      repetir 3
+        derecha
+      hacerAncho(tam)
+      juntarPapeles(cantP)
+      derecha
+      tam:=tam-1
+  fin
+  proceso escalonEsquinaCompartidaPapeles(ES cantP:numero)
+  comenzar
+    mover
+    juntarPapeles(cantP)
+    repetir 3
+      derecha
+    BloquearEsquina(16,16)
+    mover
+    EnviarMensaje(2,r3)
+    juntarPapeles(cantP)
+    repetir 2
+      derecha
+    mover
+    LiberarEsquina(16,16)
+  fin
+  proceso subirDerechaP(ES cantP:numero)
+  variables
+    tam:numero
+  comenzar
+    tam:=2
+    repetir 4
+      hacerAncho(tam)
+      juntarPapeles(cantP)
+      repetir 3
+        derecha
+      hacerAlto(tam)
+      juntarPapeles(cantP)
+      derecha
+      tam:= tam+1
+    repetir 3
+      derecha
+    mover
+  fin
+  proceso escaleraP(ES cantP:numero)
+  comenzar
+    subirIzquierdaP(cantP)
+    escalonEsquinaCompartidaPapeles(cantP)
+    subirDerechaP(cantP)
+  fin
+{-----------------------------------------------------}
+{ ------ modulos para el robot jefe ------------- }
+  {los otros recibir mensajes los tengo que recibir si o si?}
+  {solo actualizo el maximo con el primer mensaje que me llega.}
+  proceso establecerComunicacion (ES llegoPrimero:numero)
+  variables
+    id:numero
+  comenzar
+    RecibirMensaje(id,*)
+    si (id = 1 )
+      llegoPrimero:= 1
+      RecibirMensaje(id,r2)  {preguntar si esta bien}
+    sino 
+      llegoPrimero:= 2
+      RecibirMensaje(id,r1) {preguntar si esta bien}
+  fin
+  proceso esperarAvisoTerminaron 
+  variables
+    id:numero
+  comenzar
+    RecibirMensaje(id,*)
+    si (id = 1)
+      RecibirMensaje(id,r2)
+    sino
+      RecibirMensaje(id,r1)
+  fin
+areas
+  esquinaCompartida: AreaPC(16,16,16,16)
+  areaRobotF: AreaP(1,1,15,31)
+  areaRobotP: AreaP(17,1,31,31)
+robots
+  robot tipo1
+  variables
+    cantF:numero
+  comenzar
+    cantF:=0
+    escaleraFlor(cantF)
+    Informar('cantidad_de_flores',cantF)
+    EnviarMensaje(1,r3)
+  fin
+  robot tipo2
+  variables
+    cantP:numero
+  comenzar
+    cantP:=0
+    escaleraP(cantP)
+    Informar('cantidad_de_papeles',cantP)
+    EnviarMensaje(2,r3)
+  fin
+  robot rJefe
+  variables
+    ganador:numero
+    termino:boolean
+  comenzar
+    establecerComunicacion(ganador)
+    esperarAvisoTerminaron
+    Informar('EL_ROBOT_GANADOR_ESS_EL_ROBOT',ganador)
+  fin
+variables
+  r1: tipo1 {lado izquierdo, juntador de flores}
+  r2: tipo2 {lado derecho, juntador de papeles}
+  r3: rJefe
+comenzar
+  AsignarArea(r1,esquinaCompartida)
+  AsignarArea(r1,areaRobotF)
+  AsignarArea(r2,esquinaCompartida)
+  AsignarArea(r2,areaRobotP)
+  AsignarArea(r3,areaRobotF)
+  Iniciar(r3,15,1)
+  Iniciar(r2,31,1)
+  Iniciar(r1,1,1)
+fin

@@ -1,0 +1,117 @@
+{Preguntar: 
+  como puedo hacer para que si los 4 estan en la misma calle que me informe que
+  no hay un maximo
+}
+programa eje5
+procesos
+  proceso asignarIds
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+  fin
+  proceso levantar_y_dejarPapel(E avenida:numero;ES calle:numero)
+  comenzar
+    tomarPapel
+    Pos(avenida,calle)
+    LiberarEsquina(11,11)
+    depositarPapel {depositamos en la calle actual [[ del recorrido prooio de cada robot ]]}
+    mover
+    calle:=PosCa
+  fin
+  proceso recorrerAvenida (ES calle: numero)
+  variables
+    hayPapel:boolean
+    avenida:numero {avenida a recorrer}
+  comenzar
+    hayPapel:=V
+    avenida:=PosAv
+    calle:=PosCa
+    mientras ((PosCa<100) & (hayPapel))
+      BloquearEsquina(11,11)
+      Pos(11,11)
+      si (HayPapelEnLaEsquina)
+        levantar_y_dejarPapel(avenida,calle)
+      sino
+        hayPapel:=F
+        Pos(avenida,calle)
+        LiberarEsquina(11,11)
+  fin
+  proceso calcularMax(ES idMax:numero; ES max:numero; E cantCalles:numero; E id:numero)
+  comenzar
+    si (cantCalles > max)
+      max:= cantCalles
+      idMax:= id
+  fin
+  proceso recibirTodosLosMensajes(ES idMax:numero)
+  variables
+    id:numero
+    max:numero
+    cantCalles:numero
+  comenzar
+    max:= -1
+    idMax:=0
+    repetir 4
+      RecibirMensaje(id,*)
+      si (id = 1)
+        RecibirMensaje(cantCalles,r1)
+      sino
+        si (id = 2)
+          RecibirMensaje(cantCalles,r2)
+        sino
+          si (id = 3)
+            RecibirMensaje(cantCalles,r3)
+          sino
+            si (id = 4)
+              RecibirMensaje(cantCalles,r4)
+      calcularMax(idMax,max,cantCalles,id)
+  fin
+areas
+  areaR1: AreaP(4,1,4,100)
+  areaR2: AreaP(6,1,6,100)
+  areaR3: AreaP(8,1,8,100)
+  areaR4: AreaP(10,1,10,100)
+  areaCoordinador: AreaP(1,1,1,1)
+  esquinaFuentePapel: AreaPC (11,11,11,11)
+robots
+  robot rPapelero
+  variables
+    id:numero
+    calle:numero
+  comenzar
+    RecibirMensaje(id,coordinador) 
+    recorrerAvenida(calle)
+    EnviarMensaje(id,coordinador)
+    EnviarMensaje(calle,coordinador)
+  fin
+  robot rCoordinador
+  variables
+    idMax:numero
+  comenzar
+    asignarIds
+    recibirTodosLosMensajes(idMax)
+    Informar('llego_mas_lejos_el_robot',idMax)
+  fin
+variables
+  r1: rPapelero
+  r2: rPapelero
+  r3: rPapelero
+  r4: rPapelero
+  coordinador: rCoordinador
+comenzar
+  AsignarArea(r1,areaR1)
+  AsignarArea(r1,esquinaFuentePapel)
+  AsignarArea(r2,areaR2)
+  AsignarArea(r2,esquinaFuentePapel)
+  AsignarArea(r3,areaR3)
+  AsignarArea(r3,esquinaFuentePapel)
+  AsignarArea(r4,areaR4)
+  AsignarArea(r4,esquinaFuentePapel)
+  AsignarArea(coordinador,areaCoordinador)
+  Iniciar(r1,4,1)
+  Iniciar(r2,6,1)
+  Iniciar(r3,8,1)
+  Iniciar(r4,10,1)
+  Iniciar(coordinador,1,1)
+fin

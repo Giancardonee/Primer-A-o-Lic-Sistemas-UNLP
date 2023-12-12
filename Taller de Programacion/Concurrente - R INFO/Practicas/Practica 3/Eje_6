@@ -1,0 +1,265 @@
+programa eje6
+procesos
+  {------ modulos para limpiar esquina -------------}
+  proceso juntarFlores (ES cantF:numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF+1
+  fin
+  proceso juntarPapeles(ES cantP:numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      cantP:= cantP+1
+  fin
+  proceso juntarAmbas (ES cantF:numero; ES cantP:numero)
+  comenzar
+    juntarFlores(cantF)
+    juntarPapeles(cantP)
+  fin
+  {------------------------------------------------------}
+  {--- modulos para robots floreros ---}
+  proceso bloquearEsquinaFloreros(E av:numero;E ca:numero; ES cantF:numero; ES pasos:numero)
+  comenzar
+    BloquearEsquina(av,ca)
+    mover
+    juntarFlores(cantF)
+    mover
+    LiberarEsquina(av,ca)
+    pasos:= pasos+2
+  fin
+  proceso evitarPosibleChoqueFlor(ES cantF:numero; ES pasos:numero)
+  comenzar
+    si ((PosAv = 4) & (PosCa = 8))
+      bloquearEsquinaFloreros(4,8,cantF,pasos)
+    sino
+      si((PosAv = 8) & (PosCa=5) )
+        bloquearEsquinaFloreros(8,6,cantF,pasos)
+  fin
+  proceso cuadranteFloreros(ES cantF:numero; E lado:numero)
+  variables
+    pasos:numero
+  comenzar
+    pasos:=0
+    repetir 4 {cantidad de lados}
+      mientras (pasos < lado) {longitud de cada lado}
+        juntarFlores(cantF)
+        si ( ((PosAv=4) & (PosCa=8)) | ((PosAv=8) & (PosCa=5)) )
+          evitarPosibleChoqueFlor(cantF,pasos) 
+        sino
+          mover
+          pasos:=pasos+1
+      derecha
+      pasos:= 0
+  fin
+  proceso avanzarEnCalleFlor (ES cantF:numero)
+  comenzar
+    mientras ( (PosCa<100)& (cantF>0))
+      depositarFlor
+      cantF:= cantF-1
+      mover
+  fin
+  {------------------------------------------------------}
+  {--- modulos para robots papeleros ---}
+  proceso bloquearEsquinaPapeleros(E av:numero; E ca:numero; ES cantP:numero; ES pasos:numero)
+  comenzar
+    BloquearEsquina(av,ca)
+    mover
+    juntarPapeles(cantP)
+    mover
+    LiberarEsquina(av,ca)
+    pasos:= pasos+2
+  fin
+  proceso evitarPosiblesChoquesPapelero(ES cantP:numero; ES pasos:numero)
+  comenzar
+    si ( (PosAv=9) & (PosCa=14) )
+      bloquearEsquinaPapeleros(9,15,cantP,pasos)
+    sino
+      si ( (PosAv=16) & (PosCa=9))
+        bloquearEsquinaPapeleros(15,9,cantP,pasos)
+      sino
+        mover
+        pasos:=pasos+1
+  fin
+  proceso cuadrantePapeleros (ES cantP:numero; E lado:numero)
+  variables
+    pasos:numero
+  comenzar
+    pasos:=0
+    repetir 4 {cantidad de lados}
+      mientras (pasos < lado) {longitud de cada lado}
+        juntarPapeles(cantP)
+        evitarPosiblesChoquesPapelero(cantP,pasos)
+      derecha
+      pasos:=0
+  fin
+  proceso avanzarEnCallePapel (ES cantP:numero)
+  comenzar
+    mientras ( (PosCa<100) & (cantP>0) )
+      depositarPapel
+      cantP:=cantP-1
+      mover
+  fin
+  {------------------------------------------------------}
+  {--- modulos para robots papeleros y floreros ---}
+  proceso bloquearEsquinaFyP (E av:numero; E ca:numero; ES cantP:numero; ES cantF:numero; ES pasos:numero)
+  comenzar
+    BloquearEsquina(av,ca)
+    mover
+    juntarPapeles(cantP)
+    juntarFlores(cantF)
+    mover
+    LiberarEsquina(av,ca)
+    pasos:= pasos+2
+  fin
+  proceso evitarPosiblesChoquesPyF(ES cantP:numero; ES cantF:numero; ES pasos:numero)
+  comenzar
+    si ( (PosAv=5) & (PosCa=7) )
+      bloquearEsquinaFyP(5,8,cantP,cantF,pasos)
+    sino
+      si ( (PosAv=8) & (PosCa=15) )
+        bloquearEsquinaFyP(9,15,cantP,cantF,pasos)
+      sino
+        si ( (PosAv=15) & (PosCa=9) )
+          bloquearEsquinaFyP(15,10,cantP,cantF,pasos)
+        sino
+          si( (PosAv=9) & (PosCa=5) )
+            bloquearEsquinaFyP(8,5,cantP,cantF,pasos)
+          sino
+            mover
+            pasos:= pasos+1
+  fin
+  proceso cuadrantePyF (ES cantP:numero;  ES cantF:numero; E lado:numero)
+  variables
+    pasos:numero
+  comenzar
+    pasos:=0
+    repetir 4
+      mientras (pasos < lado)
+        juntarPapeles(cantP)
+        juntarFlores(cantF)
+        {posibles choques1}
+        evitarPosiblesChoquesPyF(cantP,cantF,pasos)
+      derecha
+      pasos:=0
+  fin
+  proceso avanzarEnCallePyF (ES cantP:numero; ES cantF:numero)
+  comenzar
+    mientras ( ((PosCa<100) & ((cantP>0) | (cantF>0))) )  
+      si (cantP>0)
+        depositarPapel
+        cantP:=cantP-1
+      si (cantF>0)
+        depositarFlor
+        cantF:=cantF-1
+      mover
+  fin
+  {------------------------------------------------------}
+  {----- modulos del fiscalizador -------}
+  proceso asignarIds
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+  fin
+  proceso asignarAvARecorrer
+  variables
+    calle:numero
+    quienEs:numero
+  comenzar
+    calle:=20
+    repetir 3
+      RecibirMensaje(quienEs,*)
+      si (quienEs = 1)
+        EnviarMensaje(calle,r1)
+      sino
+        si (quienEs =2)
+          EnviarMensaje(calle,r2)
+        sino
+          si (quienEs =3)
+            EnviarMensaje(calle,r3)
+      calle:=calle+1
+  fin
+areas
+  areaFiscalizador: AreaP(1,1,1,1)
+  areaCuadrados: AreaPC (2,2,16,16)
+  callePrimero: AreaPC (1,20,100,20)
+  calleSegundo: AreaPC (1,21,100,21)
+  calleTercero: AreaPC(1,22,100,22)
+robots
+  robot rFlorero
+  variables
+    cantF:numero
+    id:numero
+    calle:numero
+  comenzar
+    RecibirMensaje(id,fiscalizador)
+    cuadranteFloreros(cantF,6) 
+    EnviarMensaje(id,fiscalizador) { avisa que termino }
+    RecibirMensaje(calle,fiscalizador) { recibo la calle para pararme }
+    Pos(1,calle)
+    derecha
+    avanzarEnCalleFlor(cantF)
+  fin
+  robot rLimpiaAmbas
+  variables
+    cantF: numero
+    cantP: numero
+    id:numero
+    calle:numero
+  comenzar
+    RecibirMensaje(id,fiscalizador)
+    cuadrantePyF(cantP,cantF,10)
+    EnviarMensaje(id,fiscalizador) { avisa que termino }
+    RecibirMensaje(calle,fiscalizador) { recibo la calle para pararme }
+    Pos(1,calle)
+    derecha
+    avanzarEnCallePyF(cantP,cantF)
+  fin
+  robot rPapelero
+  variables
+    cantP:numero
+    id:numero
+    calle:numero
+  comenzar
+    RecibirMensaje(id,fiscalizador)
+    cuadrantePapeleros(cantP,7)
+    EnviarMensaje(id,fiscalizador) { avisa que termino }
+    RecibirMensaje(calle,fiscalizador) { recibo la calle para pararme }
+    Pos(1,calle)
+    derecha
+    avanzarEnCallePapel(cantP)
+  fin
+  robot rFiscalizador
+  comenzar
+    asignarIds
+    asignarAvARecorrer
+  fin
+variables
+  r1: rFlorero
+  r2: rLimpiaAmbas
+  r3: rPapelero
+  fiscalizador: rFiscalizador
+comenzar
+  {-- asignaciones para el robot 1 ---}
+  AsignarArea(r1,areaCuadrados)
+  AsignarArea(r1,callePrimero)
+  AsignarArea(r1,calleSegundo)
+  AsignarArea(r1,calleTercero)
+  {-- asignaciones para el robot 2 --}
+  AsignarArea(r2,areaCuadrados)
+  AsignarArea(r2,callePrimero)
+  AsignarArea(r2,calleSegundo)
+  AsignarArea(r2,calleTercero)
+  {-- asignaciones para el robot 3 --}
+  AsignarArea(r3,areaCuadrados)
+  AsignarArea(r3,callePrimero)
+  AsignarArea(r3,calleSegundo)
+  AsignarArea(r3,calleTercero)
+  AsignarArea(fiscalizador,areaFiscalizador)
+  Iniciar(r2,5,5)
+  Iniciar(r3,9,9)
+  Iniciar(r1,2,2)
+  Iniciar(fiscalizador,1,1)
+fin

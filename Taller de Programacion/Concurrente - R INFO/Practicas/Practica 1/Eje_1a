@@ -1,0 +1,58 @@
+programa eje1
+procesos
+  proceso dejarFloresEsquina (E cantFlores:numero)
+  comenzar
+    mientras (cantFlores>0)
+      depositarFlor
+      cantFlores:= cantFlores -1
+  fin
+  proceso juntarFlores (ES cantFlores:numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores:= cantFlores +1
+  fin
+  proceso procesarEsquina (ES cantFlores:numero; ES esqSinFlores:numero)
+  comenzar
+    si (HayFlorEnLaEsquina)
+      juntarFlores(cantFlores)
+    sino
+      esqSinFlores:= esqSinFlores+1
+  fin
+  proceso recorrerAvenida(ES cantFlores:numero; ES esqSinFlores:numero)
+  comenzar
+    cantFlores:=0
+    esqSinFlores:=0
+    repetir 99
+      procesarEsquina(cantFlores,esqSinFlores)
+      mover
+    procesarEsquina(cantFlores,esqSinFlores)
+    dejarFloresEsquina(cantFlores)
+  fin
+areas
+  ciudad1: AreaP (1,1,1,100)
+  ciudad2: AreaP (3,1,3,100)
+  ciudad3: AreaP (5,1,5,100)
+robots
+  robot tipo1
+  variables
+    cantFlores:numero
+    esqSinFlores:numero
+    av: numero
+  comenzar
+    av:=1
+    repetir 3
+      Pos(av,1)
+      recorrerAvenida(cantFlores,esqSinFlores)
+      Informar('Cantidad_De_Flores ',cantFlores)
+      Informar('Esquinas_Sin_Flores ',esqSinFlores)
+      av:= av+2
+  fin
+variables
+  robot1:tipo1
+comenzar
+  AsignarArea(robot1,ciudad1)
+  AsignarArea(robot1,ciudad2)
+  AsignarArea(robot1,ciudad3)
+  Iniciar(robot1,1,1)
+fin

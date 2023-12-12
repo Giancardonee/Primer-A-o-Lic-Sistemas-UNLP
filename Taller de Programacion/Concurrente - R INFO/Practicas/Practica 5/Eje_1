@@ -1,0 +1,190 @@
+{equipo 1: Team Rojo ( ids 1 y 2)}
+{equipo 2: Team Azul ( ids 3 y 4)}
+programa eje1
+procesos 
+  proceso juntarFlores (ES cantF:numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cantF:= cantF+1
+  fin
+  proceso juntarPapeles (ES cantP:numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      cantP:= cantP +1
+  fin
+  proceso bloquearEsquinaTeamRojo (ES cantF:numero; E avenida:numero)  
+  comenzar
+    BloquearEsquina(avenida,98)
+    mover {avenida,98}
+    juntarFlores (cantF)
+    BloquearEsquina(avenida,99)
+    mover {avenida,99}
+    LiberarEsquina(avenida,98)
+    juntarFlores(cantF)
+    mover {avenida,100}
+    LiberarEsquina(avenida,99)
+  fin
+  proceso bloquearEsquinaTeamAzul (ES cantP:numero; E calle:numero)
+  comenzar
+    BloquearEsquina(2,calle)
+    mover {2, calle --> 98 o 99 }
+    juntarPapeles(cantP)
+    BloquearEsquina(3,calle)
+    mover {3, calle --> 98 o 99}
+    LiberarEsquina(2,calle)
+    juntarPapeles(cantP)
+    mover {4, calle -- > 98 o 99}
+    LiberarEsquina(3,calle)    
+  fin
+  proceso asignarIDs
+  comenzar
+    { equipo 1 }
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    { equipo 2 }
+    EnviarMensaje (3,a1)
+    EnviarMensaje (4,a2)
+  fin
+  proceso recorrerTeamRojo (ES cantF:numero)
+  comenzar
+    cantF:= 0
+    repetir 96
+      juntarFlores (cantF)
+      mover
+    juntarFlores (cantF)
+    bloquearEsquinaTeamRojo(cantF,PosAv)  
+  fin
+  proceso recorrerTeamAzul (ES cantP:numero)
+  comenzar
+    {posicionamos subiendo calles}
+    derecha
+    cantP:= 0
+    juntarPapeles (cantP)
+    bloquearEsquinaTeamAzul (cantP,PosCa)
+    repetir 96
+      juntarPapeles(cantP)
+      mover
+  fin
+  proceso mandarIdYcantidad (E id: numero; E cant:numero)
+  comenzar
+    EnviarMensaje(id,fiscalizador)
+    EnviarMensaje(cant,fiscalizador)
+  fin
+  proceso recibirCantidadDelMismoRobot (E id:numero; ES cant1:numero; ES cant2:numero)
+  variables
+    cantidad:numero
+  comenzar
+    si ( (id = 1) | (id = 2) )
+      si (id = 1)
+        RecibirMensaje(cantidad,r1)  
+      sino {id = 2}
+        RecibirMensaje(cantidad,r2)
+      cant1:= cant1 + cantidad
+    sino 
+      si ( ( id = 3 ) | (id = 4) )
+        si (id = 3) 
+          RecibirMensaje(cantidad,a1)
+        sino {id = 4}
+          RecibirMensaje(cantidad,a2)
+      cant2:=  cant2 + cantidad
+  fin
+  proceso recibirCantidades (ES cant1: numero; ES cant2: numero)
+  variables
+    id:numero
+    cant:numero
+  comenzar
+    cant1:= 0
+    cant2:= 0
+    repetir 4
+      RecibirMensaje(id,*)
+      recibirCantidadDelMismoRobot(id,cant1,cant2)
+  fin 
+  proceso calcularMax (E cant1: numero; E cant2: numero; ES equipoMax:numero)
+  comenzar
+    si (cant1 > cant2)
+      equipoMax:=1
+    sino 
+      si (cant2 > cant1)
+        equipoMax:= 2
+      sino {coinciden la misma cantidad}
+        equipoMax:= 0  
+  fin
+areas
+  esquinaCompartida: AreaPC (2,98,3,99)
+  area1R1: AreaP (2,1,2,97)
+  area2R1: AreaP (2,100,2,100)
+  area1R2: AreaP (3,1,3,97)
+  area2R2: AreaP (3,100,3,100)
+  area1A1: AreaP (1,98,1,98)
+  area2A1: AreaP (4,98,100,98)
+  area1A2: AreaP (1,99,1,99)
+  area2A2: AreaP (4,99,100,99)
+  esquinaFiscalizador: AreaP (1,1,1,1)
+robots
+  {es el equipo 1}
+  robot rTeamRojo
+  variables
+    id:numero
+    cantF:numero
+  comenzar
+    RecibirMensaje(id,fiscalizador)
+    recorrerTeamRojo(cantF)
+    mandarIdYcantidad(id,cantF)
+  fin
+  {es el equipo 2}
+  robot rTeamAzul
+  variables
+    id:numero
+    cantP:numero
+  comenzar
+    RecibirMensaje(id,fiscalizador)
+    recorrerTeamAzul(cantP)
+    mandarIdYcantidad (id,cantP)
+  fin  
+  robot rFiscalizador
+  variables
+    cant1:numero
+    cant2:numero
+    equipoMax:numero
+  comenzar
+    asignarIDs
+    recibirCantidades (cant1,cant2)
+    calcularMax(cant1,cant2,equipoMax)
+    Informar('El_equipo_que_junto_mas_cantidades_es_el',equipoMax)
+  fin
+variables
+  r1: rTeamRojo
+  r2: rTeamRojo
+  a1: rTeamAzul
+  a2: rTeamAzul
+  fiscalizador: rFiscalizador
+comenzar
+  {asignamos la esquina compartida a los recolectores}
+  AsignarArea(r1,esquinaCompartida)
+  AsignarArea(r2,esquinaCompartida)
+  AsignarArea(a1,esquinaCompartida)
+  AsignarArea(a2,esquinaCompartida)
+  {asignamos areas privadas a cada robot}
+  { robot R1 }
+  AsignarArea (r1,area1R1)
+  AsignarArea (r1,area2R1)
+  { robot  R2}
+  AsignarArea (r2,area1R2)
+  AsignarArea (r2,area2R2)
+  { robot A1}
+  AsignarArea (a1,area1A1)
+  AsignarArea (a1,area2A1)
+  { robot A2}
+  AsignarArea (a2,area1A2)
+  AsignarArea (a2,area2A2)
+  { fiscalizador }
+  AsignarArea (fiscalizador,esquinaFiscalizador)
+  {iniciamos a los botardos }
+  Iniciar(fiscalizador,1,1)
+  Iniciar(r1,2,1)
+  Iniciar(r2,3,1)
+  Iniciar(a1,1,98)
+  Iniciar(a2,1,99)
+fin

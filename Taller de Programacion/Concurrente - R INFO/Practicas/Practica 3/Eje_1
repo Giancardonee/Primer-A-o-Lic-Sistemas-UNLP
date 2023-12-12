@@ -1,0 +1,130 @@
+{pregunte este eje y esta perfecto, lo unico que habria qeu cambiar es que no tenemos que depender
+de que la bolsa inicialmente se encuentre vacia, por lo tanto, deberiamos tener variables para llevar
+la cantidad de flores y de papeles (no lo corregí porque toy a full con los otros ejercicios)
+}
+programa eje1
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso juntarPapeles
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso guardarEsquinaInicial(ES avenida:numero; ES calle:numero)
+  comenzar
+    calle:= PosCa
+    avenida:= PosAv
+  fin
+{--------------------------------------------------}
+  proceso hacerIntentosFlorero(E avIni:numero; E caIni:numero)
+  variables
+    avRandom:numero
+    caRandom:numero
+  comenzar
+    repetir 5
+      Random(avRandom,1,5)
+      Random(caRandom,1,10)
+      BloquearEsquina(avRandom,caRandom)
+      Pos(avRandom,caRandom) {me paro en la esquina random}
+      {------------------}
+      juntarFlores
+      {------------------}
+      Pos(avIni,caIni) {vuelvo a la esquina inicial}
+      LiberarEsquina(avRandom,caRandom)
+  fin
+  proceso dejarDeAUnaFlor (E avIni:numero; E caIni:numero)
+  comenzar
+    mientras (HayFlorEnLaBolsa)
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      {------------------}
+      depositarFlor
+      {------------------}
+      Pos(avIni,caIni)
+      LiberarEsquina(10,10)
+  fin
+{--------------------------------------------------}
+  proceso hacerIntentosPapelero (E avIni:numero; E caIni:numero)
+  variables
+    avRandom:numero
+    caRandom:numero
+  comenzar
+    repetir 3
+      Random(avRandom,6,10)
+      Random(caRandom,1,9)
+      BloquearEsquina(avRandom,caRandom)
+      Pos(avRandom,caRandom)
+      {-----------------}
+      juntarPapeles
+      {-----------------}
+      Pos(avIni,caIni)
+      LiberarEsquina(avRandom,caRandom)
+  fin
+  proceso dejarDeAUnPapel (E avIni:numero; E caIni:numero)
+  comenzar
+    mientras (HayPapelEnLaBolsa)
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      {---------------}
+      depositarPapel
+      {---------------}
+      Pos(avIni,caIni)
+      LiberarEsquina(10,10)
+  fin
+areas
+  areaFloreros: AreaPC(1,1,5,10)
+  inicioFlorero1: AreaP(6,10,6,10)
+  inicioFlorero2: AreaP(7,10,7,10)
+  areaPapeleros: AreaPC(6,1,10,9)
+  inicioPapelero1: AreaP(8,10,8,10)
+  inicioPapelero2:AreaP(9,10,9,10)
+  esquinaPublica: AreaC(10,10,10,10)
+robots
+  robot rFlorero
+  variables
+    avIni:numero
+    caIni:numero
+  comenzar
+    guardarEsquinaInicial(avIni,caIni)
+    hacerIntentosFlorero(avIni,caIni)
+    dejarDeAUnaFlor(avIni,caIni)
+  fin
+  robot rPapelero
+  variables
+    avIni:numero
+    caIni:numero
+  comenzar
+    guardarEsquinaInicial(avIni,caIni)
+    hacerIntentosPapelero(avIni,caIni)
+    dejarDeAUnPapel(avIni,caIni)
+  fin
+variables
+  florero1: rFlorero
+  florero2: rFlorero
+  papelero1: rPapelero
+  papelero2: rPapelero
+comenzar
+  {-------areas de floreros----------}
+  AsignarArea(florero1,areaFloreros)
+  AsignarArea(florero1,inicioFlorero1)
+  AsignarArea(florero2,areaFloreros)
+  AsignarArea(florero2,inicioFlorero2)
+  {-------areas de papeleros----------}
+  AsignarArea(papelero1,areaPapeleros)
+  AsignarArea(papelero2,areaPapeleros)
+  AsignarArea(papelero1,inicioPapelero1)
+  AsignarArea(papelero2,inicioPapelero2)
+  {-- asigno esquina publica a cada recolector--}
+  AsignarArea(florero1,esquinaPublica)
+  AsignarArea(florero2,esquinaPublica)
+  AsignarArea(papelero1,esquinaPublica)
+  AsignarArea(papelero2,esquinaPublica)
+  Iniciar(florero1,6,10)
+  Iniciar(florero2,7,10)
+  Iniciar(papelero1,8,10)
+  Iniciar(papelero2,9,10)
+fin
