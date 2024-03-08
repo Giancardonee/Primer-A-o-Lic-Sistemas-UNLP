@@ -2,3 +2,5 @@
 Les dejo **algunas de las materias de primer año**
 de la Facultad de Informatica UNLP. 
 Estas materias corresponden al primer y segundo semestre. 
+Lo importante de este repositorio es guiarlos y que tengan una idea de como se pueden resolver los ejercicios. 
+**ACLARACION:** *Cada uno puede encarar y plantear a los ejercicios de una forma distinta, simplemente es como los resolvi yo. Espero que les sirva ;)*
